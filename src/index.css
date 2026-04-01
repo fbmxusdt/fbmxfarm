@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════
+   FBMX Farm — Modern Minimalistic Dark Green Palette
+   Dark mode is the game default (applied to :root).
+   Light mode tokens are available via the .light class.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Dark mode — default ── */
+:root {
+  --card:                     #2d3a2e;
+  --ring:                     #4caf50;
+  --input:                    #3e4a3d;
+  --muted:                    #243028;
+  --accent:                   #388e3c;
+  --border:                   #3e4a3d;
+  --radius:                   0.5rem;
+  --chart-1:                  #81c784;
+  --chart-2:                  #66bb6a;
+  --chart-3:                  #4caf50;
+  --chart-4:                  #43a047;
+  --chart-5:                  #388e3c;
+  --popover:                  #243028;
+  --primary:                  #4caf50;
+  --secondary:                #3e4a3d;
+  --background:               #1c2a1f;
+  --foreground:               #f0ebe5;
+  --destructive:              #ef4444;
+  --card-foreground:          #f0ebe5;
+  --muted-foreground:         #a8b5a3;
+  --accent-foreground:        #f0ebe5;
+  --popover-foreground:       #f0ebe5;
+  --primary-foreground:       #0a1f0c;
+  --secondary-foreground:     #d7e0d6;
+  --destructive-foreground:   #f0ebe5;
+
+  /* ── Game accent colours (not in semantic palette) ── */
+  --gold-bright:              #ffd166;
+  --gold-mid:                 #f4b740;
+  --gold-dark:                #e09f2d;
+  --gold-pale:                #fff3c4;
+  --moss:                     #81c784;
+  --moss-dark:                #388e3c;
+  --bark:                     #9b6b4d;
+
+  /* ── Legacy aliases → semantic tokens ──────────────────
+     All existing components use var(--forest-*) / var(--soil-*) /
+     var(--parchment) etc.  These mappings keep them working.
+     ─────────────────────────────────────────────────────── */
+  --forest-deep:              #0a1f0c;
+  --forest-dark:              var(--background);        /* #1c2a1f */
+  --forest-mid:               var(--card);              /* #2d3a2e */
+  --forest-light:             var(--primary);           /* #4caf50 */
+  --soil-dark:                #1a150f;
+  --soil-mid:                 #3d2c1e;
+  --soil-light:               #6d4a34;
+  --parchment:                var(--foreground);        /* #f0ebe5 */
+  --parchment-dim:            var(--muted-foreground);  /* #a8b5a3 */
+  --card-bg:                  var(--card);              /* #2d3a2e */
+  --card-border:              var(--border);            /* #3e4a3d */
+}
+
+/* ── Light mode (optional — add class="light" to <html>) ── */
+.light {
+  --card:                     #f8f5f0;
+  --ring:                     #2e7d32;
+  --input:                    #e0d6c9;
+  --muted:                    #f0e9e0;
+  --accent:                   #c8e6c9;
+  --border:                   #e0d6c9;
+  --popover:                  #f8f5f0;
+  --primary:                  #2e7d32;
+  --secondary:                #e8f5e9;
+  --background:               #f8f5f0;
+  --foreground:               #3e2723;
+  --destructive:              #c62828;
+  --card-foreground:          #3e2723;
+  --muted-foreground:         #6d4c41;
+  --accent-foreground:        #1b5e20;
+  --popover-foreground:       #3e2723;
+  --primary-foreground:       #ffffff;
+  --secondary-foreground:     #1b5e20;
+  --destructive-foreground:   #ffffff;
+
+  --moss:                     #4caf50;
+  --moss-dark:                #2e7d32;
+
+  --forest-dark:              var(--background);
+  --forest-mid:               var(--card);
+  --forest-light:             var(--primary);
+  --parchment:                var(--foreground);
+  --parchment-dim:            var(--muted-foreground);
+  --card-bg:                  var(--card);
+  --card-border:              var(--border);
+}
+
+/* ── Tailwind v4 design tokens ── */
+@theme inline {
+  /* Semantic */
+  --color-background:               var(--background);
+  --color-foreground:               var(--foreground);
+  --color-card:                     var(--card);
+  --color-card-foreground:          var(--card-foreground);
+  --color-popover:                  var(--popover);
+  --color-popover-foreground:       var(--popover-foreground);
+  --color-primary:                  var(--primary);
+  --color-primary-foreground:       var(--primary-foreground);
+  --color-secondary:                var(--secondary);
+  --color-secondary-foreground:     var(--secondary-foreground);
+  --color-muted:                    var(--muted);
+  --color-muted-foreground:         var(--muted-foreground);
+  --color-accent:                   var(--accent);
+  --color-accent-foreground:        var(--accent-foreground);
+  --color-destructive:              var(--destructive);
+  --color-destructive-foreground:   var(--destructive-foreground);
+  --color-border:                   var(--border);
+  --color-input:                    var(--input);
+  --color-ring:                     var(--ring);
+
+  /* Charts */
+  --color-chart-1:                  var(--chart-1);
+  --color-chart-2:                  var(--chart-2);
+  --color-chart-3:                  var(--chart-3);
+  --color-chart-4:                  var(--chart-4);
+  --color-chart-5:                  var(--chart-5);
+
+  /* Game accents */
+  --color-gold-bright:              var(--gold-bright);
+  --color-gold-mid:                 var(--gold-mid);
+  --color-gold-dark:                var(--gold-dark);
+  --color-gold-pale:                var(--gold-pale);
+  --color-moss:                     var(--moss);
+  --color-moss-dark:                var(--moss-dark);
+  --color-bark:                     var(--bark);
+
+  /* Legacy aliases (for any Tailwind class referencing these) */
+  --color-forest-dark:              var(--forest-dark);
+  --color-forest-mid:               var(--forest-mid);
+  --color-forest-light:             var(--forest-light);
+  --color-soil-dark:                var(--soil-dark);
+  --color-soil-mid:                 var(--soil-mid);
+  --color-parchment:                var(--parchment);
+  --color-parchment-muted:          var(--parchment-dim);
+
+  /* Typography */
+  --font-sans:  'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:  'Source Code Pro', ui-monospace, monospace;
+  --font-serif: 'Merriweather', Georgia, serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #root {
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    border: none;
+    min-height: 100svh;
+    display: block;
+  }
+}
+
+@layer utilities {
+  /* ── Animations ── */
+  .plot-bounce {
+    animation: bounce-gentle 1.4s ease-in-out infinite;
+  }
+  @keyframes bounce-gentle {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+  }
+
+  .fade-in {
+    animation: fade-in 0.2s ease;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
+  }
+  .float-anim { animation: float 4s ease-in-out infinite; }
+
+  /* ── Gold effects ── */
+  .gold-glow {
+    text-shadow: 0 0 24px rgba(255, 209, 102, 0.55);
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+  .gold-shimmer {
+    background: linear-gradient(
+      90deg,
+      #f4b740 0%, #ffd166 35%, #fff3c4 50%, #ffd166 65%, #f4b740 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* ── Radial gradient (used by glow-menu) ── */
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
+  }
+
+  /* ── Card helper ── */
+  .forest-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+  }
+}
