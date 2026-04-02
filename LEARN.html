@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FBMX FBMXFARM — Introduction</title>
+<title>FBMX FARM — Game Introduction</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -44,12 +44,15 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    padding: 48px 64px;
+    padding: 48px 64px 88px;
     opacity: 0;
     transform: translateX(60px);
     transition: opacity 0.45s ease, transform 0.45s ease;
     pointer-events: none;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
   .slide.active {
     opacity: 1;
@@ -64,13 +67,13 @@
   /* ── Navigation ── */
   .nav {
     position: fixed;
-    bottom: 32px;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 16px;
-    background: rgba(17,24,39,0.9);
+    background: rgba(17,24,39,0.92);
     border: 1px solid var(--border);
     border-radius: 9999px;
     padding: 10px 24px;
@@ -100,6 +103,9 @@
     display: flex;
     gap: 6px;
     align-items: center;
+    flex-wrap: wrap;
+    max-width: 200px;
+    justify-content: center;
   }
   .dot {
     width: 6px; height: 6px;
@@ -113,7 +119,7 @@
   /* ── Key shortcut hint ── */
   .key-hint {
     position: fixed;
-    bottom: 80px;
+    bottom: 76px;
     right: 32px;
     font-size: 11px;
     color: var(--border);
@@ -187,7 +193,7 @@
 
   /* ── Slide header ── */
   .slide-header {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     flex-shrink: 0;
   }
   .slide-header .eyebrow {
@@ -214,11 +220,20 @@
     padding: 20px 24px;
   }
   .card-grid {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
   }
-  .card-grid-2 { grid-template-columns: 1fr 1fr; }
-  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid-2 > * { flex: 1; min-width: min(100%, 260px); }
+  .card-grid-3 > * { flex: 1; min-width: min(100%, 200px); }
+
+  /* ── Reason grid (Why Won't Fail) ── */
+  .reason-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+  }
 
   /* ── Stat blocks ── */
   .stat-block .num {
@@ -422,6 +437,7 @@
     border-radius: 12px;
     background: var(--card);
     border: 1px solid var(--border);
+    flex-wrap: wrap;
   }
   .rev-year {
     font-size: 11px;
@@ -433,6 +449,7 @@
   }
   .rev-bar-wrap {
     flex: 1;
+    min-width: 80px;
     height: 8px;
     background: var(--border);
     border-radius: 4px;
@@ -447,13 +464,13 @@
     font-size: 18px;
     font-weight: 800;
     color: var(--gold);
-    min-width: 100px;
+    min-width: 80px;
     text-align: right;
   }
   .rev-note {
     font-size: 11px;
     color: var(--muted);
-    min-width: 140px;
+    min-width: 100px;
     text-align: right;
   }
 
@@ -463,8 +480,16 @@
     gap: 32px;
     align-items: center;
     height: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .funds-legend { flex: 1; }
+  .funds-chart-wrap {
+    width: 260px;
+    height: 260px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .funds-legend { flex: 1; min-width: 200px; }
   .funds-legend-row {
     display: flex;
     align-items: center;
@@ -484,7 +509,7 @@
 
   /* ── Ask slide ── */
   .ask-amount {
-    font-size: clamp(40px, 6vw, 80px);
+    font-size: clamp(36px, 6vw, 80px);
     font-weight: 900;
     line-height: 1;
     letter-spacing: -0.03em;
@@ -534,7 +559,7 @@
   }
   .close-facts {
     display: flex;
-    gap: 40px;
+    gap: 32px;
     justify-content: center;
     flex-wrap: wrap;
   }
@@ -579,33 +604,192 @@
   /* ── Chart canvas ── */
   canvas { max-width: 100%; }
 
-  /* Scroll content within slide if needed */
+  /* ── Slide body ── */
   .slide-body {
     flex: 1;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
-  .scroll-body {
+
+  /* ── Earnings table (slide 14) ── */
+  .earn-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .earn-table {
+    width: 100%;
+    min-width: 480px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .earn-table th {
+    background: rgba(34,197,94,0.06);
+    padding: 10px 14px;
+    font-size: 11px;
+    text-align: left;
+  }
+  .earn-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(31,41,55,0.6);
+  }
+  .earn-table tr:last-child td { border-bottom: none; }
+  .earn-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── Player profile cards (slide 14) ── */
+  .profile-cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .profile-card {
     flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    min-width: min(100%, 160px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .profile-card .p-emoji { font-size: 28px; }
+  .profile-card .p-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .profile-card .p-name { font-size: 15px; font-weight: 800; }
+  .profile-card .p-stat {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .profile-card .p-earn {
+    font-size: 20px;
+    font-weight: 900;
+    margin-top: 4px;
+  }
+
+  /* ── Retention hooks (slide 15) ── */
+  .hook-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex: 1;
+  }
+  .hook-card {
+    flex: 1;
+    min-width: min(100%, 220px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hook-card .h-icon { font-size: 28px; }
+  .hook-card .h-title { font-size: 14px; font-weight: 800; }
+  .hook-card .h-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .hook-card .h-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    margin-top: 2px;
+    width: fit-content;
+  }
+
+  /* ── Mobile Responsive ── */
+  @media (max-width: 768px) {
+    .slide {
+      padding: 16px 16px 80px;
+    }
+    .slide-header {
+      margin-bottom: 14px;
+    }
+    .cover-emoji {
+      display: none;
+    }
+
+    /* Force column layout on slide-body (overrides all inline flex-direction:row) */
+    .slide-body {
+      flex-direction: column !important;
+    }
+
+    /* Reason grid → single column */
+    .reason-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Tables: scrollable container */
+    .card { overflow-x: auto; }
+    table { min-width: 360px; }
+
+    /* Funds chart: shrink */
+    .funds-chart-wrap {
+      width: 180px;
+      height: 180px;
+    }
+
+    /* Charts */
+    canvas { max-height: 200px !important; }
+
+    /* Nav: full-width bottom bar */
+    .nav {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transform: none;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      padding: 8px 12px;
+      gap: 8px;
+      justify-content: space-between;
+    }
+    .dot-row {
+      max-width: 100px;
+      gap: 4px;
+    }
+    .dot { width: 5px; height: 5px; }
+    .slide-counter { min-width: 48px; font-size: 12px; }
+
+    /* Hide desktop hints */
+    .key-hint { display: none; }
+    .confidential { display: none; }
+    .slide-badge { top: 10px; right: 10px; font-size: 10px; }
+  }
+
+  @media (max-width: 480px) {
+    .profile-card { min-width: 100%; }
+    .hook-card { min-width: 100%; }
+    .ask-amount { font-size: 36px; }
+    .close-fact-num { font-size: 20px; }
+    .close-facts { gap: 16px; }
   }
 </style>
 </head>
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
-<div class="confidential">Confidential · 2026</div>
-<div class="slide-badge" id="slideBadge">1 / 14</div>
+<div class="confidential">FBMXFARM · 2026</div>
+<div class="slide-badge" id="slideBadge">1 / 16</div>
 
 <div class="deck" id="deck">
 
   <!-- SLIDE 1: Cover -->
   <div class="slide slide-cover active" data-slide="0">
-    <div class="tag">Seed Round · BSC · March 2026</div>
+    <div class="tag">BSC · BEP-20 · March 2026</div>
     <h1>FBMX <span>FARM</span></h1>
     <p class="sub">The first blockchain farming game with a bonding curve — built to outlast every competitor that came before it.</p>
     <div class="cover-stats">
@@ -687,7 +871,7 @@
           <div class="feature-icon">⏱️</div>
           <div>
             <div class="feature-title">Harvest Timing Mechanic</div>
-            <div class="feature-desc">+1% if harvested on time, −1% if late. Creates daily check-in loops stronger than passive idle games.</div>
+            <div class="feature-desc">Seeds gained if harvested on time, seeds lost if late. Creates daily check-in loops stronger than passive idle games.</div>
           </div>
         </div>
         <div class="feature">
@@ -721,9 +905,10 @@
         <div class="card" style="flex:1">
           <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">Daily Earning Potential</div>
           <div style="font-size:13px;color:var(--muted);line-height:1.9;font-family:monospace;">
-            100 seeds × 9 plots × 1% = +9 seeds/hr<br>
-            At floor price: <span style="color:var(--green);font-weight:700;">0.9 FBMX/hr</span><br>
-            At $1 FBMX: <span style="color:var(--gold);font-weight:700;">$7.20 / 8hr day</span><br>
+            200 seeds × 9 plots × 2% = +36 seeds/harvest<br>
+            3 harvests/day: <span style="color:var(--green);font-weight:700;">108 seeds/day</span><br>
+            At floor price: <span style="color:var(--green);font-weight:700;">10.8 FBMX/day</span><br>
+            At $1 FBMX: <span style="color:var(--gold);font-weight:700;">~$324/month</span><br>
             <span style="color:var(--muted);font-size:11px;">Philippines min wage: ~$8–10/day ✅</span>
           </div>
         </div>
@@ -815,7 +1000,7 @@
         <div class="game-card neutral">
           <div class="game-name green">🐶 My DeFi Pet</div>
           <div class="game-chain">BSC · Chain Validation</div>
-          <div style="display:flex;gap:24px;margin-top:8px;">
+          <div style="display:flex;gap:24px;margin-top:8px;flex-wrap:wrap;">
             <div><div style="font-size:20px;font-weight:900;color:var(--text)">1M+</div><div style="font-size:11px;color:var(--muted)">Registered Users</div></div>
             <div><div style="font-size:20px;font-weight:900;color:var(--text)">3M+</div><div style="font-size:11px;color:var(--muted)">NFTs Minted</div></div>
             <div><div style="font-size:20px;font-weight:900;color:var(--text)">130K</div><div style="font-size:11px;color:var(--muted)">Peak Monthly Users</div></div>
@@ -824,7 +1009,7 @@
         <div class="game-card warning">
           <div class="game-name red">⚔️ CryptoBlades (Cautionary Tale)</div>
           <div class="game-chain">BSC · What Not to Do</div>
-          <div style="display:flex;gap:24px;margin-top:8px;">
+          <div style="display:flex;gap:24px;margin-top:8px;flex-wrap:wrap;">
             <div><div style="font-size:20px;font-weight:900;color:var(--red)">−90%</div><div style="font-size:11px;color:var(--muted)">Token Price</div></div>
             <div><div style="font-size:20px;font-weight:900;color:var(--red)">−85%</div><div style="font-size:11px;color:var(--muted)">DAU in 6 Weeks</div></div>
             <div><div style="font-size:20px;font-weight:900;color:var(--green)">Fixed</div><div style="font-size:11px;color:var(--muted)">by bonding curve</div></div>
@@ -841,7 +1026,7 @@
       <h2>Why FBMXFARM <span>Will Not Fail</span></h2>
     </div>
     <div class="slide-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;">
+      <div class="reason-grid">
         <div class="reason-row">
           <div class="reason-num">1</div>
           <div>
@@ -867,7 +1052,7 @@
           <div class="reason-num">4</div>
           <div>
             <div class="reason-title">D30 Retention Advantage</div>
-            <div class="reason-body">Farming games: 18–25% D30 retention vs. 10.5% for hyper-casual. Harvest timing urgency (miss it, lose 1%) creates financial habit loops.</div>
+            <div class="reason-body">Farming games: 18–25% D30 retention vs. 10.5% for hyper-casual. Harvest timing urgency creates financial habit loops.</div>
           </div>
         </div>
         <div class="reason-row">
@@ -881,7 +1066,7 @@
           <div class="reason-num">6</div>
           <div>
             <div class="reason-title">Emerging Market Income Engine</div>
-            <div class="reason-body">At $1 FBMX, active players earn $7.20/8hr day. Philippines min wage is $8–10. This organic income pull drove Axie to 2.8M DAU.</div>
+            <div class="reason-body">At $1 FBMX, active players earn $10+/day. Philippines min wage is $8–10. This organic income pull drove Axie to 2.8M DAU.</div>
           </div>
         </div>
       </div>
@@ -1091,10 +1276,10 @@
       <h2>Use of <span>$500,000</span></h2>
     </div>
     <div class="slide-body" style="flex-direction:row;gap:32px;">
-      <div style="width:260px;height:260px;flex-shrink:0;align-self:center;">
+      <div class="funds-chart-wrap" style="align-self:center;">
         <canvas id="fundsChart"></canvas>
       </div>
-      <div class="funds-legend" style="flex:1;align-self:center;">
+      <div class="funds-legend" style="align-self:center;">
         <div class="funds-legend-row">
           <div class="funds-dot" style="background:#22c55e"></div>
           <div style="flex:1">
@@ -1199,7 +1384,7 @@
             <div style="width:2px;flex:1;background:linear-gradient(var(--green),var(--amber));margin-top:4px;"></div>
           </div>
           <div class="card" style="flex:1;background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.2);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
               <div style="font-size:14px;font-weight:800;">Phase 1 — Launch</div>
               <div style="font-size:11px;color:var(--green);font-weight:700;border:1px solid rgba(34,197,94,0.3);border-radius:9999px;padding:2px 10px;">Months 1–3</div>
             </div>
@@ -1212,7 +1397,7 @@
             <div style="width:2px;flex:1;background:linear-gradient(var(--amber),var(--blue));margin-top:4px;"></div>
           </div>
           <div class="card" style="flex:1;background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.2);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
               <div style="font-size:14px;font-weight:800;">Phase 2 — Growth</div>
               <div style="font-size:11px;color:var(--amber);font-weight:700;border:1px solid rgba(245,158,11,0.3);border-radius:9999px;padding:2px 10px;">Months 4–8</div>
             </div>
@@ -1225,7 +1410,7 @@
             <div style="width:2px;flex:1;background:var(--border);margin-top:4px;"></div>
           </div>
           <div class="card" style="flex:1;background:rgba(59,130,246,0.04);border-color:rgba(59,130,246,0.2);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
               <div style="font-size:14px;font-weight:800;">Phase 3 — Scale</div>
               <div style="font-size:11px;color:var(--blue);font-weight:700;border:1px solid rgba(59,130,246,0.3);border-radius:9999px;padding:2px 10px;">Months 9–12</div>
             </div>
@@ -1290,8 +1475,160 @@
     </div>
   </div>
 
-  <!-- SLIDE 14: Closing -->
-  <div class="slide slide-close" data-slide="13">
+  <!-- SLIDE 14: Player Potential Income (NEW) -->
+  <div class="slide" data-slide="13">
+    <div class="slide-header">
+      <div class="eyebrow">Player Income</div>
+      <h2>What Can You <span>Earn?</span></h2>
+    </div>
+    <div class="slide-body">
+
+      <!-- Earnings table -->
+      <div class="earn-table-wrap">
+        <table class="earn-table">
+          <thead>
+            <tr>
+              <th>Crop</th>
+              <th>Min FBMX<br><span style="font-weight:400;color:var(--muted);">(9 plots)</span></th>
+              <th>Cycles/Day</th>
+              <th>Seeds Earned<br><span style="font-weight:400;color:var(--muted);">per day · 9 plots</span></th>
+              <th>FBMX/Day<br><span style="font-weight:400;color:var(--muted);">base price</span></th>
+              <th>30-Day FBMX</th>
+              <th>Daily ROI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span style="font-weight:700;">🌾 Millet</span><br><span style="font-size:11px;color:var(--muted);">100 seeds/plot · 90 min/stage</span></td>
+              <td class="highlight">90</td>
+              <td style="color:var(--amber);font-weight:700;">4×</td>
+              <td style="color:var(--text);font-weight:600;">72 seeds</td>
+              <td class="green" style="font-weight:800;">7.2</td>
+              <td style="color:var(--gold);font-weight:800;">216</td>
+              <td class="green" style="font-weight:700;">8.0%</td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:700;">🌾 Wheat</span><br><span style="font-size:11px;color:var(--muted);">200 seeds/plot · 2 hr/stage</span></td>
+              <td class="highlight">180</td>
+              <td style="color:var(--amber);font-weight:700;">3×</td>
+              <td style="color:var(--text);font-weight:600;">108 seeds</td>
+              <td class="green" style="font-weight:800;">10.8</td>
+              <td style="color:var(--gold);font-weight:800;">324</td>
+              <td class="green" style="font-weight:700;">6.0%</td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:700;">🌽 Corn</span><br><span style="font-size:11px;color:var(--muted);">350 seeds/plot · 3 hr/stage</span></td>
+              <td class="highlight">315</td>
+              <td style="color:var(--amber);font-weight:700;">2×</td>
+              <td style="color:var(--text);font-weight:600;">180 seeds</td>
+              <td class="green" style="font-weight:800;">18.0</td>
+              <td style="color:var(--gold);font-weight:800;">540</td>
+              <td class="green" style="font-weight:700;">5.7%</td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:700;">🍚 Rice</span><br><span style="font-size:11px;color:var(--muted);">800 seeds/plot · 6 hr/stage</span></td>
+              <td class="highlight">720</td>
+              <td style="color:var(--amber);font-weight:700;">1×</td>
+              <td style="color:var(--text);font-weight:600;">216 seeds</td>
+              <td class="green" style="font-weight:800;">21.6</td>
+              <td style="color:var(--gold);font-weight:800;">648</td>
+              <td class="green" style="font-weight:700;">3.0%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Player profiles -->
+      <div class="profile-cards">
+        <div class="profile-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04);">
+          <div class="p-emoji">🌱</div>
+          <div class="p-label">Starter</div>
+          <div class="p-name green">Millet Farmer</div>
+          <div class="p-stat">90 FBMX · 4 check-ins/day<br>Set an alarm every 6 hours</div>
+          <div class="p-earn green">7.2 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted);"> /day</span></div>
+        </div>
+        <div class="profile-card" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.04);">
+          <div class="p-emoji">🚜</div>
+          <div class="p-label">Active</div>
+          <div class="p-name gold">Wheat Farmer</div>
+          <div class="p-stat">180 FBMX · 3 check-ins/day<br>Morning, afternoon, evening</div>
+          <div class="p-earn gold">10.8 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted);"> /day</span></div>
+        </div>
+        <div class="profile-card" style="border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.04);">
+          <div class="p-emoji">🏆</div>
+          <div class="p-label">Power</div>
+          <div class="p-name purple">Rice Farmer</div>
+          <div class="p-stat">720 FBMX · 1 check-in/day<br>Compound seeds daily</div>
+          <div class="p-earn purple">21.6 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted);"> /day</span></div>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div style="background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.6;">
+        <span style="color:var(--blue);font-weight:700;">ℹ Note: </span>
+        Numbers use base seed price (0.1 FBMX/seed). As demand grows, the bonding curve raises seed value — early farmers earn disproportionately more. Compounding (reinvesting earnings) accelerates returns exponentially.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Why Players Can't Stop (NEW) -->
+  <div class="slide" data-slide="14">
+    <div class="slide-header">
+      <div class="eyebrow">Retention Psychology</div>
+      <h2>Built for <span>Compulsive Play</span></h2>
+    </div>
+    <div class="slide-body">
+
+      <div class="hook-grid">
+        <div class="hook-card" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04);">
+          <div class="h-icon">⏰</div>
+          <div class="h-title">Harvest Timer</div>
+          <div class="h-desc">Crops reach peak at a precise moment. Players feel a real pull to log back in — and they do. It's the same loop that made FarmVille 83M strong.</div>
+          <span class="h-tag" style="background:rgba(239,68,68,0.15);color:var(--red);">Urgency</span>
+        </div>
+        <div class="hook-card" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04);">
+          <div class="h-icon">📉</div>
+          <div class="h-title">Withered Penalty</div>
+          <div class="h-desc">Miss the window and crops wither — you lose seeds, not just time. Loss aversion is 2× more motivating than potential gain. Players set alarms to avoid the penalty.</div>
+          <span class="h-tag" style="background:rgba(245,158,11,0.15);color:var(--amber);">Loss Aversion</span>
+        </div>
+        <div class="hook-card" style="border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.04);">
+          <div class="h-icon">🔄</div>
+          <div class="h-title">Compound Loop</div>
+          <div class="h-desc">Seeds can be replanted. Every harvest is a decision: withdraw or reinvest? Players who compound become obsessed with optimization and exponential growth.</div>
+          <span class="h-tag" style="background:rgba(34,197,94,0.15);color:var(--green);">Compounding</span>
+        </div>
+        <div class="hook-card" style="border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.04);">
+          <div class="h-icon">📈</div>
+          <div class="h-title">Rising Seed Price</div>
+          <div class="h-desc">Bonding curve: the more players who join, the higher seed prices rise. Early players benefit directly from new players joining. Network growth feels personally rewarding.</div>
+          <span class="h-tag" style="background:rgba(251,191,36,0.15);color:var(--gold);">FOMO</span>
+        </div>
+        <div class="hook-card" style="border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.04);">
+          <div class="h-icon">🏪</div>
+          <div class="h-title">P2P Market Hunting</div>
+          <div class="h-desc">Real players set seed prices. You can buy below VWAP and sell high. Price watching and market timing create daily active engagement beyond just harvesting.</div>
+          <span class="h-tag" style="background:rgba(59,130,246,0.15);color:var(--blue);">Market Play</span>
+        </div>
+        <div class="hook-card" style="border-color:rgba(168,85,247,0.25);background:rgba(168,85,247,0.04);">
+          <div class="h-icon">💰</div>
+          <div class="h-title">Real Money Stakes</div>
+          <div class="h-desc">Every seed is a real on-chain asset. The dopamine hit of harvesting is amplified when it means real FBMX in your wallet. Players in SE Asia and LATAM rely on it as income.</div>
+          <span class="h-tag" style="background:rgba(168,85,247,0.15);color:var(--purple);">Real Value</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.6;flex-shrink:0;">
+        <span style="color:var(--green);font-weight:800;">Result: </span>
+        Farming games historically achieve <strong style="color:var(--text);">18–25% Day-30 retention</strong> — nearly double the 10.5% hyper-casual average. Add real financial incentives and that number climbs further.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 16: Closing -->
+  <div class="slide slide-close" data-slide="15">
     <div class="close-badge">🌾</div>
     <div class="close-title">The farming game<br>that doesn't collapse.</div>
     <p class="close-sub">
@@ -1326,11 +1663,11 @@
 <div class="nav">
   <button id="btnPrev" onclick="navigate(-1)">‹</button>
   <div class="dot-row" id="dotRow"></div>
-  <span class="slide-counter" id="slideCounter">1 / 14</span>
+  <span class="slide-counter" id="slideCounter">1 / 16</span>
   <button id="btnNext" onclick="navigate(1)">›</button>
 </div>
 
-<div class="key-hint">← → or click dots to navigate</div>
+<div class="key-hint">← → or swipe to navigate</div>
 
 <script>
   const slides = document.querySelectorAll('.slide')
@@ -1361,6 +1698,8 @@
     transitioning = true
     slides[current].classList.remove('active')
     slides[current].classList.add('exit')
+    // scroll new slide to top before showing
+    slides[idx].scrollTop = 0
     const prev = current
     current = idx
     slides[current].classList.add('active')
@@ -1428,25 +1767,11 @@
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ` $${ctx.parsed.y}B`
-              }
-            }
+            tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.y}B` } }
           },
           scales: {
-            x: {
-              grid: { color: 'rgba(31,41,55,0.8)' },
-              ticks: { color: '#9ca3af', font: { size: 12 } }
-            },
-            y: {
-              grid: { color: 'rgba(31,41,55,0.8)' },
-              ticks: {
-                color: '#9ca3af',
-                font: { size: 11 },
-                callback: v => `$${v}B`
-              }
-            }
+            x: { grid: { color: 'rgba(31,41,55,0.8)' }, ticks: { color: '#9ca3af', font: { size: 12 } } },
+            y: { grid: { color: 'rgba(31,41,55,0.8)' }, ticks: { color: '#9ca3af', font: { size: 11 }, callback: v => `$${v}B` } }
           }
         }
       })
@@ -1478,11 +1803,7 @@
           cutout: '65%',
           plugins: {
             legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
-              }
-            }
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } }
           }
         }
       })
