@@ -1136,68 +1136,68 @@
           <thead>
             <tr>
               <th>Feature</th>
+              <th style="color:var(--green);">FBMXFARM</th>
               <th>Farmers World</th>
               <th>CropBytes</th>
               <th>Axie Infinity</th>
-              <th style="color:var(--green);">FBMXFARM</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Chain</td>
+              <td class="green" style="font-weight:700;">BSC</td>
               <td class="muted">WAX</td>
               <td class="muted">Tron/Multi</td>
               <td class="muted">Ethereum</td>
-              <td class="green" style="font-weight:700;">BSC</td>
             </tr>
             <tr>
               <td>Gas Fee</td>
+              <td class="green" style="font-weight:700;">$0.01</td>
               <td class="muted">$0.10+</td>
               <td class="muted">$0.05+</td>
               <td class="red">$5–50</td>
-              <td class="green" style="font-weight:700;">$0.01</td>
             </tr>
             <tr>
               <td>Bonding Curve</td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
               <td><span class="chk">✓</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
             </tr>
             <tr>
               <td>Browser-Based</td>
               <td><span class="chk">✓</span></td>
-              <td><span class="xmark">✗</span> Mobile only</td>
               <td><span class="chk">✓</span></td>
+              <td><span class="xmark">✗</span> Mobile only</td>
               <td><span class="chk">✓</span></td>
             </tr>
             <tr>
               <td>100% On-Chain State</td>
-              <td><span class="xmark">✗</span> Partial</td>
-              <td><span class="xmark">✗</span> Partial</td>
-              <td><span class="xmark">✗</span> Partial</td>
               <td><span class="chk">✓</span></td>
+              <td><span class="xmark">✗</span> Partial</td>
+              <td><span class="xmark">✗</span> Partial</td>
+              <td><span class="xmark">✗</span> Partial</td>
             </tr>
             <tr>
               <td>VWAP Price Oracle</td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
               <td><span class="chk">✓</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
             </tr>
             <tr>
               <td>Admin Configurable</td>
+              <td><span class="chk">✓</span></td>
               <td><span class="xmark">✗</span></td>
               <td><span class="xmark">✗</span></td>
               <td>Limited</td>
-              <td><span class="chk">✓</span></td>
             </tr>
             <tr>
               <td>Open Source</td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
-              <td><span class="xmark">✗</span></td>
               <td><span class="chk">✓</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
+              <td><span class="xmark">✗</span></td>
             </tr>
           </tbody>
         </table>
@@ -1718,13 +1718,7 @@
     if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    navigate(-1)
   })
 
-  // Touch swipe
-  let touchX = 0
-  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX }, { passive: true })
-  document.addEventListener('touchend',   e => {
-    const dx = e.changedTouches[0].clientX - touchX
-    if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1)
-  })
+  // Touch swipe disabled — use nav buttons or keyboard arrows to change slides
 
   // ── Charts ──
   let chartsInited = {}
