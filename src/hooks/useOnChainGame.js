@@ -101,6 +101,13 @@ export function useOnChainGame(address) {
     query:        { enabled: !!gameAddr, staleTime: 0, refetchOnMount: true },
   })
 
+  const { data: rawTotalPlayers } = useReadContract({
+    address:      gameAddr,
+    abi:          FARMING_GAME_ABI,
+    functionName: 'totalPlayers',
+    query:        { enabled: !!gameAddr, staleTime: 0, refetchInterval: 30_000, refetchOnMount: true },
+  })
+
   // ── Per-plot on-chain harvest status (ground truth, avoids Date.now() drift) ──
   // Query isHarvestReady and isHarvestLate for all 9 plot slots.
   const PLOT_INDICES = [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -363,5 +370,7 @@ export function useOnChainGame(address) {
     },
   }
 
-  return { state, market, marketStats, crops, log, actions, pendingAction, supported }
+  const totalPlayers = rawTotalPlayers != null ? Number(rawTotalPlayers) : null
+
+  return { state, market, marketStats, crops, totalPlayers, log, actions, pendingAction, supported }
 }

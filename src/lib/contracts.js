@@ -29,9 +29,9 @@ export const ERC20_ABI = [
 ]
 
 export const FARMING_GAME_ADDRESS = {
-  31337: import.meta.env.VITE_FARMING_GAME_ADDRESS_HARDHAT || '0xd9140951d8aE6E5F625a02F5908535e16e3af964',
+  31337: import.meta.env.VITE_FARMING_GAME_ADDRESS_HARDHAT || '0x0165878A594ca255338adfa4d48449f69242Eb8F',
   97:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC_TEST || '',
-  56:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC     || '',
+  56:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC     || '0x9A9d51edb12aA03abDD1ead955F01eE489617b83',
 }
 
 export const FARMING_GAME_ABI = [
@@ -117,6 +117,8 @@ export const FARMING_GAME_ABI = [
   { name: 'seedsPerPlot',   type: 'function', stateMutability: 'view',
     inputs: [], outputs: [{ name: '', type: 'uint256' }] },
   { name: 'harvestGracePeriod', type: 'function', stateMutability: 'view',
+    inputs: [], outputs: [{ name: '', type: 'uint256' }] },
+  { name: 'totalPlayers',       type: 'function', stateMutability: 'view',
     inputs: [], outputs: [{ name: '', type: 'uint256' }] },
   { name: 'getGameConfig',  type: 'function', stateMutability: 'view',
     inputs: [], outputs: [{ name: '', type: 'tuple', components: [

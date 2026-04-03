@@ -22,11 +22,30 @@ export const EARN_RATE          = 0.01            // 1% of seedCount (gain on ti
 const STAGE_EMOJIS = ['🫘', '🌱', '🪴', '🌾', '🚜', '🍂']
 const STAGE_LABELS = ['Seed', 'Sprout', 'Growing', 'Mature', 'Harvest Window', 'Withered']
 
+/**
+ * Elapsed ms since planting, clamped to 0.
+ * Block timestamps can be slightly ahead of the client clock (Hardhat/BSC mining latency),
+ * which would make Date.now() - plantedAt briefly negative. Math.floor of any negative
+ * fraction rounds toward -Infinity, producing stage -1 or -2 right after planting.
+ * Clamping to 0 means a freshly planted plot is always stage 0.
+ */
+function elapsedMs(plot) {
+  return Math.max(0, Date.now() - plot.plantedAt)
+}
+
+/**
+ * True while the client clock has not yet caught up to the block timestamp.
+ * Typically lasts 1–5 seconds after tx confirms (BSC block time / Hardhat drift).
+ * Used to show a "Plowing" pre-stage instead of a frozen Stage 0.
+ */
+export function isPlowing(plot) {
+  return Date.now() < plot.plantedAt
+}
+
 /** Elapsed stages, capped at MAX_STAGE. Maps to: contract `getStage(player, plotIndex)` */
 export function getStage(plot) {
-  const elapsed   = Date.now() - plot.plantedAt
-  const duration  = plot.stageDuration ?? STAGE_DURATION
-  return Math.min(Math.floor(elapsed / duration), MAX_STAGE)
+  const duration = plot.stageDuration ?? STAGE_DURATION
+  return Math.min(Math.floor(elapsedMs(plot) / duration), MAX_STAGE)
 }
 
 /**
@@ -43,10 +62,9 @@ export function isHarvestReady(plot) {
  * Grace period absorbs tx mining delay so on-time clicks aren't penalised by block confirmation lag.
  */
 export function isHarvestLate(plot) {
-  const duration    = plot.stageDuration      ?? STAGE_DURATION
-  const grace       = plot.harvestGracePeriod ?? 30_000        // default 30s
-  const elapsed     = Date.now() - plot.plantedAt
-  return elapsed >= WITHERED_STAGE * duration + grace
+  const duration = plot.stageDuration      ?? STAGE_DURATION
+  const grace    = plot.harvestGracePeriod ?? 30_000        // default 30s
+  return elapsedMs(plot) >= WITHERED_STAGE * duration + grace
 }
 
 /**
@@ -75,10 +93,9 @@ export function getHarvestTotal(plot) {
  * Stage 5: clamped at 1 (fully withered).
  */
 export function getProgress(plot) {
-  const elapsed      = Date.now() - plot.plantedAt
   const duration     = plot.stageDuration ?? STAGE_DURATION
   const stage        = getStage(plot)
-  const stageElapsed = elapsed - stage * duration
+  const stageElapsed = elapsedMs(plot) - stage * duration
   return Math.min(stageElapsed / duration, 1)
 }
 
@@ -91,8 +108,7 @@ export function getTimeToNext(plot) {
   const duration = plot.stageDuration ?? STAGE_DURATION
   const stage    = getStage(plot)
   if (stage >= MAX_STAGE) return 0
-  const elapsed  = Date.now() - plot.plantedAt
-  return Math.max(0, (stage + 1) * duration - elapsed)
+  return Math.max(0, (stage + 1) * duration - elapsedMs(plot))
 }
 
 export function getStageEmoji(plot) {

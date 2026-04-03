@@ -36,7 +36,7 @@ export function InvestorModal({ onClose }) {
           <div className="flex items-center gap-2">
             <span className="text-lg">💼</span>
             <span className="font-bold text-sm sm:text-base" style={{ color: 'var(--gold-bright)' }}>
-              FBMX Farming — Investor Deck
+              FBMX Farming — Learn
             </span>
           </div>
           <button
@@ -57,8 +57,8 @@ export function InvestorModal({ onClose }) {
 
         {/* Investor deck iframe */}
         <iframe
-          src="/INVESTOR_DECK.html"
-          title="FBMX Farming Investor Deck"
+          src="/LEARN.html"
+          title="FBMX Farming — Game Introduction"
           className="w-full flex-1 border-0"
           style={{ minHeight: 0 }}
           sandbox="allow-scripts allow-same-origin"

@@ -2,7 +2,7 @@ import {
   getStage, getStageLabel,
   getHarvestDelta, getHarvestTotal,
   getProgress, getTimeToNext,
-  isHarvestReady, isHarvestLate,
+  isHarvestReady, isHarvestLate, isPlowing,
   HARVEST_STAGE, formatMs,
 } from '../lib/plants.js'
 import { PlantSprite } from './PlantSprite.jsx'
@@ -33,6 +33,30 @@ function EmptyPlot({ index, onPlant, walletConnected }) {
 }
 
 function PlantedPlot({ plot, index, onHarvest, spriteUrl }) {
+  const plowing  = isPlowing(plot)
+
+  // While plowing: client clock hasn't caught up to block.timestamp yet (1–5s after tx confirms).
+  // Show a tilling pre-stage so the UI doesn't freeze on Stage 0/4 with a stuck timer.
+  if (plowing) {
+    return (
+      <div className="relative aspect-square min-h-28 rounded-xl border-2 overflow-hidden border-amber-900/60 bg-amber-950/20">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
+          <span className="text-3xl animate-bounce">⛏️</span>
+          <span className="text-[10px] text-amber-400 font-semibold">Plowing…</span>
+        </div>
+        <div className="absolute bottom-2 left-2 right-2">
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-800/60 rounded-full animate-pulse w-full" />
+          </div>
+          <div className="text-[9px] text-center text-amber-700 mt-0.5 leading-none">
+            Confirming on-chain…
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const stage    = getStage(plot)
   // ready: local time (responsive button — harvest window is 1 full stage wide, drift is negligible)
   // late:  chain truth (accurate penalty display — contractLate ?? local fallback while polling)

@@ -19,7 +19,7 @@ import { AboutGame }             from './components/AboutGame.jsx'
 
 export default function App() {
   const { address, isConnected }                                        = useConnection()
-  const { state, market, marketStats, crops, log, actions, pendingAction, supported } = useOnChainGame(address)
+  const { state, market, marketStats, crops, totalPlayers, log, actions, pendingAction, supported } = useOnChainGame(address)
   const { formatted: fbmxFormatted, balance: fbmxBalance }              = useTokenBalance(address)
   const [plantingPlot, setPlantingPlot]                                 = useState(null)
   const [showSwap, setShowSwap]                                         = useState(false)
@@ -98,6 +98,16 @@ export default function App() {
                   <span className="ml-1 font-normal" style={{ color: 'var(--parchment-dim)' }}>seeds</span>
                 </span>
               </div>
+              {totalPlayers != null && (
+                <div className="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs"
+                  style={{ background: 'var(--soil-mid)', border: '1px solid var(--bark)' }}>
+                  <span>👨‍🌾</span>
+                  <span className="font-bold" style={{ color: 'var(--parchment)' }}>
+                    {totalPlayers.toLocaleString()}
+                    <span className="ml-1 font-normal" style={{ color: 'var(--parchment-dim)' }}>farmers</span>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* ── Two-column layout ── */}

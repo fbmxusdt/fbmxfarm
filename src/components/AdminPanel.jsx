@@ -300,9 +300,9 @@ const GAS_HARVEST = 57_124
 const GAS_CYCLE   = GAS_PLANT + GAS_HARVEST  // 107,132 per plot per cycle
 
 function ProfitabilityCalculator({ config, gameAddr, publicClient, refetchAll }) {
-  const [fbmxPrice,    setFbmxPrice]    = useState('0.220')
+  const [fbmxPrice,    setFbmxPrice]    = useState('0.200')
   const [bnbPrice,     setBnbPrice]     = useState('600')
-  const [gasGwei,      setGasGwei]      = useState('0.07425')
+  const [gasGwei,      setGasGwei]      = useState('0.05')
   const [fetching,     setFetching]     = useState(false)
   const [applying,     setApplying]     = useState(null)   // 'min'|'rec'|'com'
   const [feedback,     setFeedback]     = useState(null)

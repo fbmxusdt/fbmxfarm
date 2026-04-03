@@ -18,7 +18,7 @@ const GAS_HARVEST = 57_124
 const GAS_CYCLE   = GAS_PLANT + GAS_HARVEST   // 107,132
 
 // BSC average gas price from BSCScan (0.07425 Gwei measured live)
-const DEFAULT_GAS_GWEI = 0.07425
+const DEFAULT_GAS_GWEI = 0.005
 // BNB/USD rough default — user can override
 const DEFAULT_BNB_USD  = 600
 
@@ -446,10 +446,10 @@ export function ProfitabilityWidget({ state, marketStats, crops }) {
             {/* ── Investment vs Return ── */}
             {entryCostUSD != null && net30USD != null && (
               <div className="rounded-lg border border-gray-600 bg-gray-900/70 p-4">
-                <div className="grid grid-cols-3 gap-3 items-center">
+                <div className="flex flex-wrap justify-around gap-y-4 gap-x-2 items-center">
 
                   {/* Invested */}
-                  <div className="text-center">
+                  <div className="text-center min-w-[90px]">
                     <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">💰 You Invest</div>
                     <div className="text-2xl font-black text-white">{fUSD(entryCostUSD)}</div>
                     <div className="text-[10px] text-gray-500 mt-1">
@@ -464,8 +464,8 @@ export function ProfitabilityWidget({ state, marketStats, crops }) {
                   </div>
 
                   {/* Multiplier */}
-                  <div className="text-center">
-                    <div className="text-gray-600 text-sm mb-1">→ 30 days →</div>
+                  <div className="text-center min-w-[80px]">
+                    <div className="text-gray-600 text-sm mb-1">→ 30d →</div>
                     <div className={`text-4xl font-black ${multiplier != null && multiplier >= 1 ? 'text-green-400' : 'text-red-400'}`}>
                       {multiplier != null ? `${multiplier.toFixed(2)}×` : '—'}
                     </div>
@@ -475,7 +475,7 @@ export function ProfitabilityWidget({ state, marketStats, crops }) {
                   </div>
 
                   {/* Net Profit */}
-                  <div className="text-center">
+                  <div className="text-center min-w-[90px]">
                     <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">📈 30d Net Profit</div>
                     <div className={`text-2xl font-black ${profColor(net30USD)}`}>{fUSD(net30USD)}</div>
                     <div className="text-[10px] text-gray-500 mt-1">

@@ -24,7 +24,7 @@ const MENU_ITEMS = [
     iconColor: 'text-emerald-400',
   },
   {
-    id: 'investors', investor: true, icon: TrendingUp, label: 'Investors', mobileLabel: 'Investors',
+    id: 'investors', investor: true, icon: TrendingUp, label: 'Learn', mobileLabel: 'Learn',
     href: '#',
     gradient: 'radial-gradient(circle, rgba(251,191,36,0.22) 0%, rgba(245,158,11,0.08) 50%, rgba(217,119,6,0) 100%)',
     iconColor: 'text-amber-400',
