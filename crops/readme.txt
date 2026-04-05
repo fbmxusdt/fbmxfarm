@@ -78,8 +78,8 @@ STYLE & RENDERING:
 - No motion blur, no depth of field, no glow effects
 
 BACKGROUND (CRITICAL):
-- White background
-- NO checkerboard pattern, NO gradient, NO sky, solid white background color
+- Alpha Channel Transparent background
+- NO checkerboard pattern, NO gradient, NO sky,
 - Only include a small centered soil base under each plant
 - No shadows extending outside each frame
 
