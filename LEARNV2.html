@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FBMX FARM — The Digital Farming Revolution</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --gold:    #f59e0b;
+  --gold2:   #fbbf24;
+  --gold3:   #fde68a;
+  --green:   #22c55e;
+  --green2:  #4ade80;
+  --teal:    #2dd4bf;
+  --purple:  #a855f7;
+  --rose:    #f43f5e;
+  --blue:    #3b82f6;
+  --bg:      #050a05;
+  --bg2:     #0b150b;
+  --card:    #0f1a0f;
+  --card2:   #162416;
+  --border:  #1e3a1e;
+  --text:    #f0faf0;
+  --muted:   #6b8f6b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+
+/* ─── Particle canvas ─────────────────────── */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0}
+
+/* ─── Deck ──────────────────────────────── */
+.deck{width:100%;height:100vh;position:relative;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:44px 72px 80px;
+  opacity:0;transform:translateX(80px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+  z-index:1;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-80px)}
+
+/* ─── Progress bar ───────────────────────── */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--green),var(--gold),var(--green2));transition:width .45s ease;z-index:200}
+.slide-badge{position:fixed;top:18px;right:26px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.1em;z-index:150}
+.brand-tag{position:fixed;top:18px;left:26px;font-size:11px;color:rgba(34,197,94,.45);font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:150}
+
+/* ─── Nav ────────────────────────────────── */
+.nav{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:14px;
+  background:rgba(11,21,11,.92);border:1px solid var(--border);
+  border-radius:9999px;padding:10px 24px;z-index:100;
+  backdrop-filter:blur(16px);
+}
+.nav button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;padding:4px 8px;border-radius:6px;transition:color .2s,background .2s}
+.nav button:hover{color:var(--text);background:var(--border)}
+.nav button:disabled{opacity:.25;cursor:default}
+.slide-counter{font-size:13px;color:var(--muted);min-width:52px;text-align:center}
+.dot-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:200px;justify-content:center}
+@media (max-width:600px) and (orientation:portrait){.dot-row{display:none}}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s,transform .2s}
+.dot.active{background:var(--green);transform:scale(1.5)}
+
+/* ─── Typography helpers ─────────────────── */
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.eyebrow.gold{color:var(--gold)}
+.eyebrow.purple{color:var(--purple)}
+.eyebrow.teal{color:var(--teal)}
+h2.slide-title{font-size:clamp(26px,3.2vw,44px);font-weight:900;letter-spacing:-.025em;line-height:1.08;margin-bottom:6px}
+h2.slide-title .hl{color:var(--gold)}
+h2.slide-title .gr{color:var(--green)}
+.slide-sub{font-size:clamp(13px,1.3vw,16px);color:var(--muted);margin-bottom:20px;line-height:1.6;max-width:680px}
+.slide-body{flex:1;display:flex;flex-direction:column;gap:14px}
+
+/* ─── Cards ──────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px}
+.card.glow-green{border-color:rgba(34,197,94,.25);box-shadow:0 0 24px rgba(34,197,94,.06)}
+.card.glow-gold{border-color:rgba(245,158,11,.25);box-shadow:0 0 24px rgba(245,158,11,.06)}
+.card.glow-purple{border-color:rgba(168,85,247,.25);box-shadow:0 0 24px rgba(168,85,247,.06)}
+.grid2{display:flex;flex-wrap:wrap;gap:14px}
+.grid2>*{flex:1;min-width:min(100%,280px)}
+.grid3{display:flex;flex-wrap:wrap;gap:14px}
+.grid3>*{flex:1;min-width:min(100%,200px)}
+.grid4{display:flex;flex-wrap:wrap;gap:12px}
+.grid4>*{flex:1;min-width:min(100%,160px)}
+
+/* ─── Stat blocks ────────────────────────── */
+.stat-num{font-size:clamp(22px,2.4vw,34px);font-weight:900;line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em;line-height:1.4}
+.stat-sub{font-size:12px;color:var(--green);margin-top:5px;font-weight:700}
+
+/* ─── Color shortcuts ─────────────────────── */
+.gold{color:var(--gold)}.green{color:var(--green)}.teal{color:var(--teal)}
+.purple{color:var(--purple)}.rose{color:var(--rose)}.muted{color:var(--muted)}
+.blue{color:var(--blue)}
+
+/* ─── Cover slide ─────────────────────────── */
+.slide-cover{
+  background:
+    radial-gradient(ellipse at 65% 35%,rgba(34,197,94,.13) 0%,transparent 55%),
+    radial-gradient(ellipse at 20% 75%,rgba(245,158,11,.1) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 85%,rgba(168,85,247,.07) 0%,transparent 40%),
+    var(--bg);
+  justify-content:center;
+}
+.cover-tag{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--green);border:1px solid rgba(34,197,94,.35);border-radius:9999px;padding:5px 16px;
+  margin-bottom:26px;background:rgba(34,197,94,.06);
+}
+.cover-h1{font-size:clamp(40px,6vw,78px);font-weight:900;line-height:1.02;letter-spacing:-.04em;margin-bottom:22px}
+.cover-h1 .line2{color:var(--gold);display:block}
+.cover-sub{font-size:clamp(15px,1.8vw,21px);color:var(--muted);max-width:600px;line-height:1.65;margin-bottom:40px}
+.cover-stats{display:flex;gap:48px;flex-wrap:wrap}
+.cs-num{font-size:clamp(26px,3vw,40px);font-weight:900;color:var(--gold2);line-height:1}
+.cs-lbl{font-size:11px;color:var(--muted);margin-top:5px;text-transform:uppercase;letter-spacing:.1em}
+.cover-giant{position:absolute;right:60px;top:50%;transform:translateY(-50%);font-size:220px;opacity:.08;user-select:none;pointer-events:none;line-height:1}
+
+/* ─── Opportunity / why now ──────────────── */
+.opp-row{display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.opp-row:last-child{border-bottom:none}
+.opp-icon{font-size:26px;line-height:1;flex-shrink:0;margin-top:2px}
+.opp-title{font-size:14px;font-weight:800;margin-bottom:3px}
+.opp-body{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* ─── Stage tracker ──────────────────────── */
+.stage-row{display:flex;gap:0;align-items:center;margin-bottom:10px}
+.stage-box{flex:1;text-align:center;padding:14px 8px;border:1px solid var(--border);font-size:12px;font-weight:700;position:relative}
+.stage-box:first-child{border-radius:10px 0 0 10px}
+.stage-box:last-child{border-radius:0 10px 10px 0}
+.stage-box .sn{font-size:22px;margin-bottom:4px}
+.stage-box .sl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.stage-box.harvest{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35)}
+.stage-box.withered{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.25)}
+.stage-arrow{font-size:18px;color:var(--muted);flex-shrink:0;margin:0 -1px;z-index:1}
+
+/* ─── Strategy roadmap ───────────────────── */
+.roadmap{display:flex;flex-direction:column;gap:0}
+.road-step{display:flex;gap:20px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)}
+.road-step:last-child{border-bottom:none}
+.road-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;margin-top:2px}
+.road-title{font-size:14px;font-weight:800;margin-bottom:3px}
+.road-body{font-size:12px;color:var(--muted);line-height:1.55}
+.road-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:9999px;margin-top:5px;letter-spacing:.06em}
+
+/* ─── Crop table ─────────────────────────── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:8px 14px;border-bottom:1px solid var(--border)}
+td{padding:11px 14px;border-bottom:1px solid rgba(30,58,30,.7);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(34,197,94,.025)}
+td.hl{color:var(--gold);font-weight:800}
+td.g{color:var(--green);font-weight:700}
+td.t{color:var(--teal);font-weight:700}
+
+/* ─── Bonding curve bars ──────────────────── */
+.bc-row{display:flex;align-items:center;gap:12px;margin:5px 0}
+.bc-label{width:80px;font-size:12px;color:var(--muted)}
+.bc-bar-wrap{flex:1;height:10px;background:var(--card2);border-radius:5px;overflow:hidden}
+.bc-bar{height:100%;border-radius:5px;transition:width .8s ease}
+.bc-val{width:90px;font-size:12px;font-weight:700;text-align:right}
+
+/* ─── Player tier cards ──────────────────── */
+.tier-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.tier-emoji{font-size:32px}
+.tier-name{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.12em}
+.tier-budget{font-size:22px;font-weight:900;line-height:1}
+.tier-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)}
+.tier-row:last-child{border-bottom:none}
+.tier-key{color:var(--muted)}
+.tier-val{font-weight:700}
+
+/* ─── Token driver cards ──────────────────── */
+.driver-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+.driver-icon{font-size:26px;flex-shrink:0;margin-top:1px}
+.driver-title{font-size:14px;font-weight:800;margin-bottom:4px}
+.driver-body{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* ─── Token holder benefit ──────────────── */
+.benefit-row{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border)}
+.benefit-row:last-child{border-bottom:none}
+.benefit-check{font-size:20px;flex-shrink:0;margin-top:1px}
+.benefit-title{font-size:14px;font-weight:800;margin-bottom:3px}
+.benefit-body{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ─── Addiction mechanic ──────────────────── */
+.hook-card{background:var(--card);border:1px solid rgba(168,85,247,.25);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.hook-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 50%,rgba(168,85,247,.08),transparent 60%)}
+.hook-num{font-size:28px;font-weight:900;color:var(--purple);line-height:1;margin-bottom:4px}
+.hook-title{font-size:14px;font-weight:800;margin-bottom:3px}
+.hook-body{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ─── Disclaimer slide ───────────────────── */
+.slide-disclaimer{background:radial-gradient(ellipse at 50% 50%,rgba(245,158,11,.06) 0%,transparent 70%),var(--bg);justify-content:center;align-items:center;text-align:center}
+.disclaimer-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:36px 44px;max-width:740px;margin:0 auto}
+.disc-icon{font-size:56px;margin-bottom:16px}
+.disc-title{font-size:clamp(18px,2.2vw,28px);font-weight:900;color:var(--gold);margin-bottom:14px}
+.disc-body{font-size:13px;color:var(--muted);line-height:1.75;max-width:620px;margin:0 auto 20px}
+.disc-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.disc-pill{font-size:11px;font-weight:700;padding:5px 14px;border-radius:9999px;letter-spacing:.06em}
+
+/* ─── Closing slide ──────────────────────── */
+.slide-close{background:radial-gradient(ellipse at 50% 40%,rgba(34,197,94,.12) 0%,transparent 65%),var(--bg);justify-content:center;align-items:center;text-align:center}
+.close-badge{font-size:80px;margin-bottom:20px;display:block;animation:float 3.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.close-h1{font-size:clamp(32px,5vw,60px);font-weight:900;letter-spacing:-.03em;line-height:1.06;margin-bottom:14px}
+.close-h1 span{color:var(--gold)}
+.close-sub{font-size:clamp(13px,1.6vw,19px);color:var(--muted);max-width:580px;line-height:1.65;margin-bottom:34px}
+.close-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.cstat-num{font-size:clamp(24px,2.8vw,38px);font-weight:900;color:var(--gold)}
+.cstat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+
+/* ─── Pulse animation ────────────────────── */
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 rgba(34,197,94,0)}50%{box-shadow:0 0 20px rgba(34,197,94,.25)}}
+.pulse-green{animation:pulse-green 2.5s ease-in-out infinite}
+@keyframes counter-anim{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:counter-anim .5s ease forwards}
+
+canvas{max-width:100%}
+
+/* ─── Mobile responsive ──────────────────── */
+@media (max-width:768px){
+  .slide{padding:16px 16px 80px}
+  .slide-body{flex-direction:column !important}
+  .slide-header{margin-bottom:12px}
+  .cover-giant{display:none}
+  .brand-tag{display:none}
+  .cover-h1{font-size:clamp(28px,8vw,44px)}
+  .cover-sub{font-size:14px}
+  .cover-stats{gap:24px}
+  .reason-grid{grid-template-columns:1fr}
+  .card{overflow-x:auto}
+  table{min-width:360px}
+  canvas{max-height:200px !important}
+  h2.slide-title{font-size:clamp(20px,5.5vw,32px)}
+  .stat-num{font-size:clamp(18px,4.5vw,28px)}
+  .slide-badge{top:10px;right:10px;font-size:10px}
+  .nav{left:0;right:0;bottom:0;transform:none;border-radius:0;border-left:none;border-right:none;border-bottom:none;padding:8px 12px;gap:8px;justify-content:space-between}
+  .dot-row{display:none}
+  .slide-counter{min-width:40px;font-size:12px}
+}
+@media (max-width:480px){
+  .profile-card{min-width:100%}
+  .grid4>*{min-width:min(100%,140px)}
+  .tier-card{min-width:100%}
+  .close-stats{gap:20px}
+  .cs-num,.cstat-num{font-size:clamp(20px,6vw,30px)}
+}
+
+/* ─── Compat: LEARN.html vars missing in V2 ─ */
+:root{--amber:#f59e0b;--red:#ef4444}
+.amber{color:var(--amber)}
+.red{color:var(--red)}
+
+/* ─── Slide-header (LEARN style) ─────────── */
+.slide-header{margin-bottom:20px;flex-shrink:0}
+.slide-header .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.slide-header h2{font-size:clamp(22px,2.8vw,38px);font-weight:900;letter-spacing:-.02em;line-height:1.1}
+.slide-header h2 span{color:var(--gold)}
+
+/* ─── LEARN card-grid ──────────────────── */
+.card-grid{display:flex;flex-wrap:wrap;gap:14px}
+.card-grid-2>*{flex:1;min-width:min(100%,260px)}
+.card-grid-3>*{flex:1;min-width:min(100%,200px)}
+
+/* ─── stat-block (LEARN) ──────────────── */
+.stat-block .num{font-size:28px;font-weight:900;line-height:1}
+.stat-block .lbl{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+/* ─── Game comparison cards (LEARN) ───── */
+.game-card{border-radius:14px;padding:18px 20px;border:1px solid var(--border)}
+.game-card .game-name{font-size:15px;font-weight:800;margin-bottom:2px}
+.game-card .game-chain{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+.game-card .game-stat{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(31,41,55,.5)}
+.game-card .game-stat:last-child{border-bottom:none}
+.game-card .game-stat-label{color:var(--muted)}
+.game-card .game-stat-val{font-weight:700}
+.game-card.success{background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.2)}
+.game-card.warning{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.15)}
+.game-card.neutral{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.15)}
+
+/* ─── Why Won't Fail reason-grid ─────── */
+.reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.reason-row{display:flex;gap:14px;align-items:flex-start;padding:12px 16px;border-radius:10px;background:var(--card);border:1px solid var(--border)}
+.reason-num{font-size:22px;font-weight:900;color:var(--green);line-height:1;min-width:28px}
+.reason-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.reason-body{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ─── Check/X marks ───────────────────── */
+.chk{color:var(--green);font-size:16px}
+.xmark{color:var(--red);font-size:16px}
+
+/* ─── Earnings table (LEARN slide 14) ── */
+.earn-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--border)}
+.earn-table{width:100%;min-width:520px;border-collapse:collapse;font-size:13px}
+.earn-table th{background:rgba(34,197,94,.06);padding:10px 14px;font-size:11px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.earn-table td{padding:11px 14px;border-bottom:1px solid rgba(30,58,30,.7);vertical-align:middle}
+.earn-table tr:last-child td{border-bottom:none}
+.earn-table tr:hover td{background:rgba(34,197,94,.02)}
+.earn-table td.highlight{color:var(--gold);font-weight:700}
+
+/* ─── Player profile cards (LEARN 14) ── */
+.profile-cards{display:flex;gap:12px;flex-wrap:wrap}
+.profile-card{flex:1;min-width:min(100%,160px);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.profile-card .p-emoji{font-size:28px}
+.profile-card .p-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.profile-card .p-name{font-size:15px;font-weight:800}
+.profile-card .p-stat{font-size:12px;color:var(--muted);line-height:1.6}
+.profile-card .p-earn{font-size:20px;font-weight:900;margin-top:4px}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="progress"></div>
+<div class="brand-tag">🌾 FBMX FARM</div>
+<div class="slide-badge" id="slideBadge">1 / 16</div>
+
+<div class="deck" id="deck">
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 1 — COVER
+══════════════════════════════════════════════════════════ -->
+<div class="slide slide-cover active" data-index="0">
+  <div class="cover-tag">🌍 The Digital Farming Revolution · BSC · On-Chain</div>
+  <h1 class="cover-h1">
+    Your Farm.<br>
+    <span class="line2">Your Fortune.</span>
+  </h1>
+  <p class="cover-sub">
+    FBMX Farm is the first fully on-chain harvest game on BSC where every seed, every crop,
+    every profit is recorded immutably on the blockchain. No house edge. No fake yields.
+    Pure on-chain economics — and real FBMX rewards.
+  </p>
+  <div class="cover-stats">
+    <div><div class="cs-num">9</div><div class="cs-lbl">Plots Per Player</div></div>
+    <div><div class="cs-num">4</div><div class="cs-lbl">Crop Varieties</div></div>
+    <div><div class="cs-num">1%</div><div class="cs-lbl">Base Harvest Profit</div></div>
+    <div><div class="cs-num">BSC</div><div class="cs-lbl">$0.005 Gas/Cycle</div></div>
+  </div>
+  <div class="cover-giant">🌾</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 2 — THE OPPORTUNITY
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="1">
+  <div>
+    <div class="eyebrow gold">💡 The Digital Farming Opportunity</div>
+    <h2 class="slide-title">Why <span class="hl">Right Now</span> is the Perfect Time</h2>
+    <p class="slide-sub">GameFi is a $12B+ market and barely 5% of crypto users have ever played a yield-generating on-chain game. The gap between opportunity and participation has never been wider.</p>
+  </div>
+  <div class="slide-body">
+    <div class="card glow-green">
+      <div class="opp-row">
+        <div class="opp-icon">🌱</div>
+        <div>
+          <div class="opp-title">Early Mover Advantage is Everything</div>
+          <div class="opp-body">Players who enter when the seed supply is low buy at the lowest bonding curve price. As more players join, seed prices rise — early farmers hold seeds worth more FBMX than they paid. First-movers are always the biggest winners in on-chain economies.</div>
+        </div>
+      </div>
+      <div class="opp-row">
+        <div class="opp-icon">⛓️</div>
+        <div>
+          <div class="opp-title">100% On-Chain — No Server, No Rug</div>
+          <div class="opp-body">Every crop, every harvest, every seed balance lives in immutable Solidity code on BSC. There is no backend that can disappear. No admin can pause your harvest. The smart contract IS the game server — running forever.</div>
+        </div>
+      </div>
+      <div class="opp-row">
+        <div class="opp-icon">💎</div>
+        <div>
+          <div class="opp-title">Real Asset Backed Gameplay</div>
+          <div class="opp-body">Every coin in the game is 1:1 backed by FBMX. You deposit FBMX, you receive coins. You withdraw coins, you receive FBMX. Seeds you earn are sellable on the in-game marketplace. Your harvest profits are real — minted as new seeds on-chain.</div>
+        </div>
+      </div>
+      <div class="opp-row" style="border-bottom:none">
+        <div class="opp-icon">🔥</div>
+        <div>
+          <div class="opp-title">The Bonding Curve Creates Natural Price Discovery</div>
+          <div class="opp-body">Unlike static games, seed price in FBMX Farm rises automatically as more players plant. More farmers = higher seed price = higher value for existing seed holders. You profit from network growth even when you're not actively farming.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 2 (inserted) — MARKET SIZE $301B
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="2">
+  <div class="slide-header">
+    <div class="eyebrow">Market Opportunity</div>
+    <h2>$301 Billion Market <span>by 2030</span></h2>
+  </div>
+  <div class="slide-body" style="flex-direction:row;gap:24px">
+    <div style="flex:1.2;display:flex;flex-direction:column;gap:0">
+      <canvas id="marketChart" style="flex:1;max-height:320px"></canvas>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div class="card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Play-to-Earn Breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--muted)">P2E Market 2024</span>
+            <span style="font-size:16px;font-weight:800">$5.8B</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--muted)">P2E Market 2033</span>
+            <span style="font-size:16px;font-weight:800;color:var(--green)">$25.3B</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--muted)">CAGR</span>
+            <span style="font-size:16px;font-weight:800;color:var(--gold)">17.6%</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">User Demographics</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2">
+          <span style="color:var(--green);font-weight:700">62%</span> of new users from emerging markets<br>
+          <span style="color:var(--amber);font-weight:700">38%</span> Asia-Pacific market share<br>
+          <span style="color:var(--blue);font-weight:700">60–70%</span> aged 18–35
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:14px 16px">
+        <div style="font-size:11px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Why Right Now</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Bear market cleared bad actors. BSC fees at $0.01. Animoca Brands + Binance $200M gaming fund active. Recovery cycle just beginning — FBMX Farm launches at the perfect inflection point.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 3 (inserted) — BSC ADVANTAGE
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="13">
+  <div class="slide-header">
+    <div class="eyebrow">Chain Selection</div>
+    <h2>Why <span>Binance Smart Chain</span></h2>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid card-grid-3" style="flex:1">
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">⚡</div>
+        <div class="stat-block"><div class="num green">3s</div><div class="lbl">Block Time</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">Fast enough for real-time farming. Players see harvest results immediately — no waiting.</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">💸</div>
+        <div class="stat-block"><div class="num gold">$0.01</div><div class="lbl">Average Gas Fee</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">98% cheaper than 2022. Full plant + harvest cycle costs ~$0.005. Players can harvest 9 plots daily for under $0.05.</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">🎮</div>
+        <div class="stat-block"><div class="num amber">500+</div><div class="lbl">Active Games on BSC</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">Proven gamer audience already on-chain. Wallets installed, tokens funded. No user education needed.</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">🏦</div>
+        <div class="stat-block"><div class="num blue">$200M</div><div class="lbl">BSC Gaming Fund</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">Animoca Brands + Binance co-funded ecosystem grants. FBMX Farm is positioned to apply.</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">🔗</div>
+        <div class="stat-block"><div class="num purple">4,000+</div><div class="lbl">Total dApps on BSC</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">Largest EVM ecosystem outside Ethereum. DEX liquidity for FBMX/BNB trading at launch.</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">🚀</div>
+        <div class="stat-block"><div class="num green">opBNB</div><div class="lbl">L2 Ready</div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5">1-second blocks, $0.001 gas on opBNB. When gaming scales, a migration path already exists.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 5 — HOW THE GAME WORKS
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="5">
+  <div>
+    <div class="eyebrow">🎮 Game Mechanics</div>
+    <h2 class="slide-title">Simple to Learn, <span class="hl">Impossible to Stop</span></h2>
+    <p class="slide-sub">Four actions drive everything. Each one triggers your leaderboard position in real-time.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid2" style="flex:unset">
+      <div class="card glow-green">
+        <div style="font-size:32px;margin-bottom:10px">💰</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:6px">1. Deposit FBMX</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Convert your FBMX tokens into in-game coins at a strict 1:1 rate. 1 FBMX = 1 Coin. Zero spread, zero fee. Your coins are always redeemable back to FBMX — the game contract holds the liquidity.</div>
+      </div>
+      <div class="card glow-gold">
+        <div style="font-size:32px;margin-bottom:10px">🫘</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:6px">2. Buy Seeds</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Use coins to buy seeds from the bonding curve shop. Starting price: 10 seeds per coin. As demand grows and more seeds get planted, the price climbs — rewarding early buyers with a lower cost basis.</div>
+      </div>
+      <div class="card" style="border-color:rgba(45,212,191,.2)">
+        <div style="font-size:32px;margin-bottom:10px">🌱</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:6px">3. Plant Your Plots</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">You have <strong class="green">9 plots</strong> to fill. Choose from Millet, Wheat, Corn, or Rice. Each has a different speed and profit rate. Plant all 9 simultaneously to maximize daily yield. Seeds are locked until harvest.</div>
+      </div>
+      <div class="card" style="border-color:rgba(168,85,247,.2)">
+        <div style="font-size:32px;margin-bottom:10px">🚜</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:6px">4. Harvest & Compound</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Harvest at Stage 4 to earn your profit bonus. Reinvest immediately into new crops. Compound daily and watch your seed stack grow exponentially. Every harvest also updates your spot on the leaderboard.</div>
+      </div>
+    </div>
+    <div class="card" style="background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.2);flex-shrink:0">
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+        <div style="font-size:13px;color:var(--muted)">Also available:</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:4px 12px;border-radius:9999px">🏪 In-Game Marketplace — sell seeds to other players</span>
+          <span style="font-size:12px;font-weight:700;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);padding:4px 12px;border-radius:9999px">🏆 Live Leaderboard — Top 50 Seeds &amp; Coins holders</span>
+          <span style="font-size:12px;font-weight:700;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);padding:4px 12px;border-radius:9999px">📊 Profitability Calculator — plan your ROI before you plant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 4 — THE HARVEST WINDOW (Addiction Loop)
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="6">
+  <div>
+    <div class="eyebrow purple">⚡ The Core Loop</div>
+    <h2 class="slide-title">The Harvest Window — <span class="hl">Pure Adrenaline</span></h2>
+    <p class="slide-sub">Six stages. One critical window. Miss it and you lose. This is the mechanic that keeps players coming back — every single cycle.</p>
+  </div>
+  <div class="slide-body">
+    <div style="flex-shrink:0">
+      <div class="stage-row">
+        <div class="stage-box"><div class="sn">🌰</div><div class="sl">Stage 0</div><div>Seed</div></div>
+        <div class="stage-arrow">→</div>
+        <div class="stage-box"><div class="sn">🌿</div><div class="sl">Stage 1</div><div>Sprout</div></div>
+        <div class="stage-arrow">→</div>
+        <div class="stage-box"><div class="sn">🌱</div><div class="sl">Stage 2</div><div>Growing</div></div>
+        <div class="stage-arrow">→</div>
+        <div class="stage-box"><div class="sn">🌾</div><div class="sl">Stage 3</div><div>Mature</div></div>
+        <div class="stage-arrow">→</div>
+        <div class="stage-box harvest pulse-green"><div class="sn">✅</div><div class="sl">Stage 4</div><div class="green">HARVEST!</div></div>
+        <div class="stage-arrow">→</div>
+        <div class="stage-box withered"><div class="sn">💀</div><div class="sl">Stage 5</div><div class="rose">Withered</div></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card glow-green">
+        <div style="font-size:28px;margin-bottom:8px">✅ Harvest On Time</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Harvest at Stage 4 → earn <strong class="green">+1% bonus seeds</strong> minted on-chain and added to your wallet. Replant immediately for maximum compound growth. During seasonal events, the rate can rise to 2% or more — watch for promotions.</div>
+        <div style="font-size:20px;font-weight:900;color:var(--green)">+1% seeds minted (base)</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Seasonal promotions can boost to 2–3% · Locked at plant time</div>
+      </div>
+      <div class="card" style="border-color:rgba(244,63,94,.25);background:rgba(244,63,94,.04)">
+        <div style="font-size:28px;margin-bottom:8px">💀 Harvest Late</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Miss Stage 4, crop withers at Stage 5 → <strong class="rose">−1% seeds burned</strong>. Your crop shrivels. The penalty stings — and it creates powerful urgency to play. During seasonal events the penalty also mirrors the boosted rate.</div>
+        <div style="font-size:20px;font-weight:900;color:var(--rose)">−1% seeds burned (base)</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">30-second grace period absorbs network latency</div>
+      </div>
+    </div>
+    <div class="card glow-purple" style="flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px">🧠 Why This Creates Addiction</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--muted);flex:1;min-width:180px;line-height:1.6">The <strong style="color:var(--text)">variable reward schedule</strong> — knowing exactly when to harvest but having real consequences for being late — is the same psychological loop that drives slot machines, but YOU control the outcome through skill and timing.</div>
+        <div style="font-size:12px;color:var(--muted);flex:1;min-width:180px;line-height:1.6">Multiple plots running simultaneously means players are <strong style="color:var(--text)">constantly monitoring</strong>. Millet cycles every 6 hours. 9 plots staggered = you check back multiple times per day, every day.</div>
+        <div style="font-size:12px;color:var(--muted);flex:1;min-width:180px;line-height:1.6">The leaderboard updates <strong style="color:var(--text)">on every single transaction</strong>. See your rank move in real time. Compete with every wallet on BSC. Social competition is the deepest hook in any game.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 5 — CROP COMPARISON
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="7">
+  <div>
+    <div class="eyebrow teal">🌾 Crop Economics</div>
+    <h2 class="slide-title">Choose Your <span class="hl">Farming Strategy</span></h2>
+    <p class="slide-sub">Each crop offers a different risk/reward rhythm. Your strategy — and your patience level — determines which crop fits best.</p>
+  </div>
+  <div class="slide-body">
+    <div class="card glow-green" style="flex-shrink:0;overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Seeds Required</th>
+            <th>Profit / Harvest</th>
+            <th>Stage Duration</th>
+            <th>Cycle Time</th>
+            <th>Cycles / Day</th>
+            <th>Daily Yield (9 plots)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🌾 <strong>Millet</strong></td>
+            <td>100</td>
+            <td class="g">+1 seed (+1%)</td>
+            <td>1.5 hr</td>
+            <td>6 hr</td>
+            <td class="hl">4×</td>
+            <td class="hl">36 seeds</td>
+          </tr>
+          <tr>
+            <td>🌾 <strong>Wheat</strong></td>
+            <td>200</td>
+            <td class="g">+2 seeds (+1%)</td>
+            <td>2 hr</td>
+            <td>8 hr</td>
+            <td class="hl">3×</td>
+            <td class="hl">54 seeds</td>
+          </tr>
+          <tr>
+            <td>🌽 <strong>Corn</strong></td>
+            <td>350</td>
+            <td class="g">+3.5 seeds (+1%)</td>
+            <td>3 hr</td>
+            <td>12 hr</td>
+            <td class="hl">2×</td>
+            <td class="hl">63 seeds</td>
+          </tr>
+          <tr>
+            <td>🍚 <strong>Rice</strong></td>
+            <td>800</td>
+            <td class="g">+8 seeds (+1%)</td>
+            <td>6 hr</td>
+            <td>24 hr</td>
+            <td class="hl">1×</td>
+            <td class="hl">72 seeds</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2">
+      <div class="card" style="border-color:rgba(34,197,94,.2)">
+        <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:10px">🔄 Millet: The Compounder</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Fastest cycle. Plant → harvest → replant → repeat every 6 hours. With 9 plots, you earn <strong class="green">36 seeds/day from 900 seeds</strong> = <strong class="gold">4% effective daily ROI</strong>. Perfect for active traders who check in 4× per day. Compounds fastest. During seasonal 2–3% events, daily yield jumps to 72–108 seeds.</div>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.2)">
+        <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:10px">🌊 Rice: The Passive Giant</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">One 24-hour cycle. Harvest once daily. With 9 plots and 7,200 seeds invested, earn <strong class="gold">72 seeds/day</strong> = <strong class="green">1% daily</strong> base rate. Perfect for set-and-forget players. Less attention, steady returns. True passive income — and during seasonal boosts, up to 216 seeds/day at 3%.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 7 — PLAYER INCOME (from LEARN.html slide 14)
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="8">
+  <div class="slide-header">
+    <div class="eyebrow">Player Income</div>
+    <h2>What Can You <span>Earn?</span></h2>
+  </div>
+  <div class="slide-body">
+    <div class="earn-table-wrap">
+      <table class="earn-table">
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Min FBMX<br><span style="font-weight:400;color:var(--muted)">(9 plots)</span></th>
+            <th>Cycles/Day</th>
+            <th>Seeds Earned<br><span style="font-weight:400;color:var(--muted)">per day · 9 plots</span></th>
+            <th>FBMX/Day<br><span style="font-weight:400;color:var(--muted)">base price</span></th>
+            <th>30-Day FBMX</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="font-weight:700">🌾 Millet</span><br><span style="font-size:11px;color:var(--muted)">100 seeds/plot · 1.5 hr/stage · 6 hr cycle</span></td>
+            <td class="highlight">90</td>
+            <td style="color:var(--amber);font-weight:700">4×</td>
+            <td style="color:var(--text);font-weight:600">36 seeds</td>
+            <td class="green" style="font-weight:800">3.6</td>
+            <td style="color:var(--gold);font-weight:800">108</td>
+          </tr>
+          <tr>
+            <td><span style="font-weight:700">🌾 Wheat</span><br><span style="font-size:11px;color:var(--muted)">200 seeds/plot · 2 hr/stage · 8 hr cycle</span></td>
+            <td class="highlight">180</td>
+            <td style="color:var(--amber);font-weight:700">3×</td>
+            <td style="color:var(--text);font-weight:600">54 seeds</td>
+            <td class="green" style="font-weight:800">5.4</td>
+            <td style="color:var(--gold);font-weight:800">162</td>
+          </tr>
+          <tr>
+            <td><span style="font-weight:700">🌽 Corn</span><br><span style="font-size:11px;color:var(--muted)">350 seeds/plot · 3 hr/stage · 12 hr cycle</span></td>
+            <td class="highlight">315</td>
+            <td style="color:var(--amber);font-weight:700">2×</td>
+            <td style="color:var(--text);font-weight:600">63 seeds</td>
+            <td class="green" style="font-weight:800">6.3</td>
+            <td style="color:var(--gold);font-weight:800">189</td>
+          </tr>
+          <tr>
+            <td><span style="font-weight:700">🍚 Rice</span><br><span style="font-size:11px;color:var(--muted)">800 seeds/plot · 6 hr/stage · 24 hr cycle</span></td>
+            <td class="highlight">720</td>
+            <td style="color:var(--amber);font-weight:700">1×</td>
+            <td style="color:var(--text);font-weight:600">72 seeds</td>
+            <td class="green" style="font-weight:800">7.2</td>
+            <td style="color:var(--gold);font-weight:800">216</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="profile-cards">
+      <div class="profile-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)">
+        <div class="p-emoji">🌱</div>
+        <div class="p-label">Starter</div>
+        <div class="p-name green">Millet Farmer</div>
+        <div class="p-stat">90 FBMX · 4 check-ins/day<br>Every 6 hours — set an alarm</div>
+        <div class="p-earn green">3.6 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted)"> /day</span></div>
+      </div>
+      <div class="profile-card" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.04)">
+        <div class="p-emoji">🚜</div>
+        <div class="p-label">Active</div>
+        <div class="p-name gold">Wheat Farmer</div>
+        <div class="p-stat">180 FBMX · 3 check-ins/day<br>Morning, afternoon, evening</div>
+        <div class="p-earn gold">5.4 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted)"> /day</span></div>
+      </div>
+      <div class="profile-card" style="border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.04)">
+        <div class="p-emoji">🏆</div>
+        <div class="p-label">Power</div>
+        <div class="p-name purple">Rice Farmer</div>
+        <div class="p-stat">720 FBMX · 1 check-in/day<br>Harvest once, compound daily</div>
+        <div class="p-earn purple">7.2 FBMX<span style="font-size:13px;font-weight:400;color:var(--muted)"> /day</span></div>
+      </div>
+    </div>
+    <div style="background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.6;flex-shrink:0">
+      <span style="color:var(--blue);font-weight:700">ℹ Note: </span>
+      Numbers use base seed price (0.1 FBMX/seed). As demand grows, the bonding curve raises seed value — early farmers earn disproportionately more. Seasonal promotions can temporarily boost profitBps to 2–3%. Compounding (reinvesting harvest seeds) accelerates growth every cycle.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 8 — BONDING CURVE
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="9">
+  <div>
+    <div class="eyebrow gold">📈 Price Mechanics</div>
+    <h2 class="slide-title">The Bonding Curve — <span class="hl">Demand Drives Value</span></h2>
+    <p class="slide-sub">Seed price is not fixed. It is determined algorithmically by how many seeds are currently planted vs. in circulation. More players farming = higher seed cost = your existing seeds are worth more.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid2" style="flex:unset">
+      <div class="card glow-gold">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:12px;font-family:monospace">price = baseSeedPrice × (supply + planted) / supply</div>
+        <div style="margin-bottom:16px">
+          <div class="bc-row">
+            <div class="bc-label">0% planted</div>
+            <div class="bc-bar-wrap"><div class="bc-bar" style="width:50%;background:var(--green)"></div></div>
+            <div class="bc-val green">10 seeds/coin</div>
+          </div>
+          <div class="bc-row">
+            <div class="bc-label">25% planted</div>
+            <div class="bc-bar-wrap"><div class="bc-bar" style="width:62%;background:#7ec845"></div></div>
+            <div class="bc-val" style="color:#7ec845">8 seeds/coin</div>
+          </div>
+          <div class="bc-row">
+            <div class="bc-label">50% planted</div>
+            <div class="bc-bar-wrap"><div class="bc-bar" style="width:75%;background:var(--gold)"></div></div>
+            <div class="bc-val gold">6.7 seeds/coin</div>
+          </div>
+          <div class="bc-row">
+            <div class="bc-label">75% planted</div>
+            <div class="bc-bar-wrap"><div class="bc-bar" style="width:87%;background:#f97316"></div></div>
+            <div class="bc-val" style="color:#f97316">5.7 seeds/coin</div>
+          </div>
+          <div class="bc-row">
+            <div class="bc-label">100% planted</div>
+            <div class="bc-bar-wrap"><div class="bc-bar" style="width:100%;background:var(--rose)"></div></div>
+            <div class="bc-val rose">5 seeds/coin</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted)">Price floor: 0.1 FBMX/seed · Price ceiling: 0.2 FBMX/seed at 100% planted</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card" style="border-color:rgba(34,197,94,.2)">
+          <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:8px">🌱 What This Means for Early Players</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Early players buy seeds cheaply. As adoption grows and more seeds are locked in plots, your seed holdings become worth 2× more in FBMX terms. You earn profit on harvest AND on price appreciation simultaneously.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.2)">
+          <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:8px">📊 VWAP Tracks Market Health</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Every completed marketplace trade updates the on-chain Volume Weighted Average Price (VWAP). Cannot be manipulated by listings — only actual completed trades count. A rising VWAP = a thriving economy and growing player base.</div>
+        </div>
+        <div class="card" style="border-color:rgba(168,85,247,.2)">
+          <div style="font-size:13px;font-weight:800;color:var(--purple);margin-bottom:8px">🔒 Anti-Bot Protection</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Harvest and seed purchases are EOA-only with a 6-second per-player cooldown and one-call-per-block limit. Bots cannot front-run honest players. The game is designed for humans first.</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:180px;flex-shrink:0">
+      <canvas id="bondingChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 7 — FARMING STRATEGIES (BUDGET → WHALE)
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="10">
+  <div>
+    <div class="eyebrow">🗺️ Strategy Guide</div>
+    <h2 class="slide-title">From <span class="gr">Budget Farmer</span> to <span class="hl">Multi-Million Seed Whale</span></h2>
+    <p class="slide-sub">Your starting capital doesn't matter — your strategy and compounding discipline does. Here's how every tier of player wins.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid3" style="flex:unset">
+      <div class="tier-card" style="border-color:rgba(34,197,94,.3)">
+        <div class="tier-emoji">🌱</div>
+        <div class="tier-name green">Budget Farmer</div>
+        <div class="tier-budget green">Millet</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Entry Level · 4 cycles/day</div>
+        <div class="tier-row"><span class="tier-key">9-plot seed cost</span><span class="tier-val">900 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Profit per harvest</span><span class="tier-val">+9 seeds (9×1)</span></div>
+        <div class="tier-row"><span class="tier-key">Daily gain</span><span class="tier-val green">+36 seeds/day</span></div>
+        <div class="tier-row"><span class="tier-key">30-day profit</span><span class="tier-val gold">+1,080 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Total after 30d</span><span class="tier-val gold">1,980 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Compound move</span><span class="tier-val green">Upgrade to Wheat</span></div>
+      </div>
+      <div class="tier-card" style="border-color:rgba(245,158,11,.3)">
+        <div class="tier-emoji">🌽</div>
+        <div class="tier-name gold">Mid Farmer</div>
+        <div class="tier-budget gold">Wheat</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Growing Fast · 3 cycles/day</div>
+        <div class="tier-row"><span class="tier-key">9-plot seed cost</span><span class="tier-val">1,800 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Profit per harvest</span><span class="tier-val">+18 seeds (9×2)</span></div>
+        <div class="tier-row"><span class="tier-key">Daily gain</span><span class="tier-val green">+54 seeds/day</span></div>
+        <div class="tier-row"><span class="tier-key">30-day profit</span><span class="tier-val gold">+1,620 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Total after 30d</span><span class="tier-val gold">3,420 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Compound move</span><span class="tier-val gold">Upgrade to Corn/Rice</span></div>
+      </div>
+      <div class="tier-card" style="border-color:rgba(168,85,247,.3)">
+        <div class="tier-emoji">🐋</div>
+        <div class="tier-name purple">Whale Farmer</div>
+        <div class="tier-budget purple">Rice</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Market Mover · 1 cycle/day</div>
+        <div class="tier-row"><span class="tier-key">9-plot seed cost</span><span class="tier-val">7,200 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Profit per harvest</span><span class="tier-val">+72 seeds (9×8)</span></div>
+        <div class="tier-row"><span class="tier-key">Daily gain</span><span class="tier-val green">+72 seeds/day</span></div>
+        <div class="tier-row"><span class="tier-key">30-day profit</span><span class="tier-val gold">+2,160 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Total after 30d</span><span class="tier-val gold">9,360 seeds</span></div>
+        <div class="tier-row"><span class="tier-key">Compound move</span><span class="tier-val purple">Dominate leaderboard</span></div>
+      </div>
+    </div>
+    <div class="card glow-gold" style="flex-shrink:0">
+      <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:10px">🚀 The Path from Budget to Whale — The Compound Roadmap</div>
+      <div class="roadmap">
+        <div class="road-step">
+          <div class="road-num" style="background:rgba(34,197,94,.15);color:var(--green)">1</div>
+          <div>
+            <div class="road-title">Start with Millet — Fill All 9 Plots</div>
+            <div class="road-body">Even with just $10-$20 of FBMX, buy 900 seeds and fill all 9 Millet plots immediately. Every plot not planted is profit left on the table.</div>
+            <span class="road-badge" style="background:rgba(34,197,94,.1);color:var(--green)">Week 1</span>
+          </div>
+        </div>
+        <div class="road-step">
+          <div class="road-num" style="background:rgba(245,158,11,.15);color:var(--gold)">2</div>
+          <div>
+            <div class="road-title">Reinvest 100% for 30 Days — No Exceptions</div>
+            <div class="road-body">Every harvest goes straight back into accumulated seeds. At 1% per harvest × 4 harvests/day (Millet), you earn +1,080 seeds on top of your 900-seed investment in 30 days — that's your entire starting cost earned back in profit. Never sell until you've upgraded every plot.</div>
+            <span class="road-badge" style="background:rgba(245,158,11,.1);color:var(--gold)">Month 1</span>
+          </div>
+        </div>
+        <div class="road-step">
+          <div class="road-num" style="background:rgba(45,212,191,.15);color:var(--teal)">3</div>
+          <div>
+            <div class="road-title">Graduate to Corn &amp; Rice — Scale Up Plots</div>
+            <div class="road-body">Once you have 3,000+ seeds, start mixing in Corn and Rice for higher-seed-count plots. Higher minSeeds = higher absolute profit per harvest. Your daily yield in raw seeds explodes.</div>
+            <span class="road-badge" style="background:rgba(45,212,191,.1);color:var(--teal)">Month 2</span>
+          </div>
+        </div>
+        <div class="road-step" style="border-bottom:none">
+          <div class="road-num" style="background:rgba(168,85,247,.15);color:var(--purple)">4</div>
+          <div>
+            <div class="road-title">List Seeds on Marketplace — Extract FBMX Profit</div>
+            <div class="road-body">At scale, list excess seeds above your planting needs on the marketplace at above-bonding-curve prices. Other players buy your seeds. You receive FBMX coins. Withdraw to wallet. You've turned time into capital.</div>
+            <span class="road-badge" style="background:rgba(168,85,247,.1);color:var(--purple)">Month 3+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 8 — COMPOUND GROWTH CHART
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="12">
+  <div>
+    <div class="eyebrow gold">📊 Seed Growth Model</div>
+    <h2 class="slide-title">More Seeds Planted = <span class="hl">More Seeds Earned</span></h2>
+    <p class="slide-sub">1% profit per cycle. The compound effect is unlocked by upgrading crops: accumulate seeds from harvests → plant higher-tier crops → earn more seeds per cycle → repeat. Each line below shows a different starting capital level growing at 1%/cycle.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid4" style="flex:unset">
+      <div class="card"><div class="stat-num green">+1.00%</div><div class="stat-lbl">🌾 Millet · Daily compound<br>1%/cycle × 4 cycles/day</div></div>
+      <div class="card"><div class="stat-num gold">+1.00%</div><div class="stat-lbl">🌾 Wheat · Daily compound<br>1%/cycle × 3 cycles/day</div></div>
+      <div class="card"><div class="stat-num" style="color:var(--teal)">+1.00%</div><div class="stat-lbl">🌽 Corn · Daily compound<br>1%/cycle × 2 cycles/day</div></div>
+      <div class="card"><div class="stat-num purple">+1.00%</div><div class="stat-lbl">🍚 Rice · Daily compound<br>1%/cycle × 1 cycle/day</div></div>
+    </div>
+    <div style="height:260px;position:relative">
+      <canvas id="compoundChart"></canvas>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.2);flex-shrink:0;padding:14px 20px">
+      <div style="font-size:12px;color:var(--muted);line-height:1.65">
+        ⚠️ <strong style="color:var(--text)">How the compounding works:</strong> Each harvest earns +1% of planted seeds. You accumulate the profit until you have enough seeds to plant a higher-tier crop (Millet→Wheat→Corn→Rice). More seeds per plot = more seeds earned per cycle. The chart models this as continuous 1% per cycle reinvestment — actual growth follows the same curve but in discrete upgrade steps.
+        No late harvests assumed. Bonding curve price held constant. Not a guaranteed return.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 9 — PLAYER GROWTH PROJECTION
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="15">
+  <div>
+    <div class="eyebrow teal">👨‍🌾 Market Growth</div>
+    <h2 class="slide-title">Player Adoption — <span class="hl">The Network Effect</span></h2>
+    <p class="slide-sub">Every new farmer drives seed demand, raises the bonding curve price, and benefits every existing holder. This is the flywheel that powers exponential token appreciation.</p>
+  </div>
+  <div class="slide-body">
+    <div style="height:260px;position:relative;flex-shrink:0">
+      <canvas id="playerChart"></canvas>
+    </div>
+    <div class="grid3" style="flex:unset">
+      <div class="card glow-green">
+        <div class="stat-num green">1K</div>
+        <div class="stat-lbl">Target Players · Month 3</div>
+        <div class="stat-sub">Seed price rises 15%</div>
+      </div>
+      <div class="card glow-gold">
+        <div class="stat-num gold">10K</div>
+        <div class="stat-lbl">Target Players · Month 9</div>
+        <div class="stat-sub">Price at bonding ceiling</div>
+      </div>
+      <div class="card" style="border-color:rgba(168,85,247,.25)">
+        <div class="stat-num purple">50K+</div>
+        <div class="stat-lbl">Target Players · Year 2</div>
+        <div class="stat-sub">Marketplace volume explodes</div>
+      </div>
+    </div>
+    <div class="card" style="flex-shrink:0;border-color:rgba(45,212,191,.2)">
+      <div style="font-size:13px;font-weight:800;color:var(--teal);margin-bottom:8px">🔁 The Growth Flywheel</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px">
+        <span style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:5px 12px;border-radius:8px">More players</span>
+        <span class="muted">→</span>
+        <span style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);padding:5px 12px;border-radius:8px">More seeds planted</span>
+        <span class="muted">→</span>
+        <span style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.2);padding:5px 12px;border-radius:8px">Bonding curve rises</span>
+        <span class="muted">→</span>
+        <span style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);padding:5px 12px;border-radius:8px">Seeds worth more FBMX</span>
+        <span class="muted">→</span>
+        <span style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2);padding:5px 12px;border-radius:8px">FOMO from outsiders</span>
+        <span class="muted">→</span>
+        <span style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:5px 12px;border-radius:8px;font-weight:800;color:var(--green)">More players ↺</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 12 — COMPARABLE GAMES (from LEARN.html slide 5)
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="3">
+  <div class="slide-header">
+    <div class="eyebrow">Comparable Games</div>
+    <h2>The Market Is <span>Proven</span></h2>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid card-grid-3" style="flex:1">
+      <div class="game-card success">
+        <div class="game-name green">🌾 Farmers World</div>
+        <div class="game-chain">WAX Blockchain · 2021</div>
+        <div class="game-stat"><span class="game-stat-label">All-time volume</span><span class="game-stat-val gold">$195M</span></div>
+        <div class="game-stat"><span class="game-stat-label">Weekly active wallets</span><span class="game-stat-val">89,000</span></div>
+        <div class="game-stat"><span class="game-stat-label">Weekly transactions</span><span class="game-stat-val">32M+</span></div>
+        <div class="game-stat"><span class="game-stat-label">Chain ranking</span><span class="game-stat-val">#20 all chains</span></div>
+        <div style="font-size:11px;color:var(--green);margin-top:10px;font-weight:600">✓ Gold standard — on a slower chain than BSC</div>
+      </div>
+      <div class="game-card neutral">
+        <div class="game-name" style="color:var(--blue)">🌱 CropBytes</div>
+        <div class="game-chain">Tron → Multi-chain · 2018</div>
+        <div class="game-stat"><span class="game-stat-label">Operational</span><span class="game-stat-val green">5+ years</span></div>
+        <div class="game-stat"><span class="game-stat-label">Total players</span><span class="game-stat-val">650,000</span></div>
+        <div class="game-stat"><span class="game-stat-label">Monthly volume</span><span class="game-stat-val">$7M+</span></div>
+        <div class="game-stat"><span class="game-stat-label">Peak return</span><span class="game-stat-val gold">+8,900%</span></div>
+        <div style="font-size:11px;color:var(--blue);margin-top:10px;font-weight:600">✓ Longevity proof across multiple bear markets</div>
+      </div>
+      <div class="game-card neutral">
+        <div class="game-name purple">🐾 Axie Infinity</div>
+        <div class="game-chain">Ethereum · 2021 peak</div>
+        <div class="game-stat"><span class="game-stat-label">Peak daily users</span><span class="game-stat-val gold">2.8 million</span></div>
+        <div class="game-stat"><span class="game-stat-label">Peak monthly rev.</span><span class="game-stat-val gold">$196.89M</span></div>
+        <div class="game-stat"><span class="game-stat-label">Series B raise</span><span class="game-stat-val">$152M</span></div>
+        <div class="game-stat"><span class="game-stat-label">AXS token peak</span><span class="game-stat-val">$155</span></div>
+        <div style="font-size:11px;color:var(--purple);margin-top:10px;font-weight:600">✓ Scale proof — ceiling is enormous</div>
+      </div>
+    </div>
+    <div class="card-grid card-grid-2">
+      <div class="game-card neutral">
+        <div class="game-name green">🐶 My DeFi Pet</div>
+        <div class="game-chain">BSC · Chain Validation</div>
+        <div style="display:flex;gap:24px;margin-top:8px;flex-wrap:wrap">
+          <div><div style="font-size:20px;font-weight:900">1M+</div><div style="font-size:11px;color:var(--muted)">Registered Users</div></div>
+          <div><div style="font-size:20px;font-weight:900">3M+</div><div style="font-size:11px;color:var(--muted)">NFTs Minted</div></div>
+          <div><div style="font-size:20px;font-weight:900">130K</div><div style="font-size:11px;color:var(--muted)">Peak Monthly Users</div></div>
+        </div>
+      </div>
+      <div class="game-card warning">
+        <div class="game-name" style="color:var(--rose)">⚔️ CryptoBlades (Cautionary Tale)</div>
+        <div class="game-chain">BSC · What Not to Do</div>
+        <div style="display:flex;gap:24px;margin-top:8px;flex-wrap:wrap">
+          <div><div style="font-size:20px;font-weight:900;color:var(--rose)">−90%</div><div style="font-size:11px;color:var(--muted)">Token Price</div></div>
+          <div><div style="font-size:20px;font-weight:900;color:var(--rose)">−85%</div><div style="font-size:11px;color:var(--muted)">DAU in 6 Weeks</div></div>
+          <div><div style="font-size:20px;font-weight:900;color:var(--green)">Fixed</div><div style="font-size:11px;color:var(--muted)">by bonding curve</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 13 — WHY WE WON'T FAIL (from LEARN.html slide 6)
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="14">
+  <div class="slide-header">
+    <div class="eyebrow">Durability Analysis</div>
+    <h2>Why FBMXFARM <span>Will Not Fail</span></h2>
+  </div>
+  <div class="slide-body">
+    <div class="reason-grid">
+      <div class="reason-row">
+        <div class="reason-num">1</div>
+        <div>
+          <div class="reason-title">On-Chain Permanence</div>
+          <div class="reason-body">Smart contract is deployed and immutable. No server to shut down. The game runs independently of the team — forever.</div>
+        </div>
+      </div>
+      <div class="reason-row">
+        <div class="reason-num">2</div>
+        <div>
+          <div class="reason-title">Self-Regulating Token Economy</div>
+          <div class="reason-body">Bonding curve responds to demand without intervention. High demand raises price, rewarding holders. Low demand lowers price, attracting buyers.</div>
+        </div>
+      </div>
+      <div class="reason-row">
+        <div class="reason-num">3</div>
+        <div>
+          <div class="reason-title">50+ Years of Farming Game Data</div>
+          <div class="reason-body">Happy Farm (23M DAU), FarmVille (83M MAU), Stardew Valley (30M copies). The loop is universally understood. Blockchain adds ownership, not complexity.</div>
+        </div>
+      </div>
+      <div class="reason-row">
+        <div class="reason-num">4</div>
+        <div>
+          <div class="reason-title">D30 Retention Advantage</div>
+          <div class="reason-body">Farming games: 18–25% D30 retention vs. 10.5% for hyper-casual. Harvest timing urgency creates financial habit loops.</div>
+        </div>
+      </div>
+      <div class="reason-row">
+        <div class="reason-num">5</div>
+        <div>
+          <div class="reason-title">BSC Ecosystem Support</div>
+          <div class="reason-body">500+ active games, $200M ecosystem fund (Animoca + Binance), $0.01 gas fees. Infrastructure and community are already in place.</div>
+        </div>
+      </div>
+      <div class="reason-row">
+        <div class="reason-num">6</div>
+        <div>
+          <div class="reason-title">Emerging Market Income Engine</div>
+          <div class="reason-body">At $1 FBMX, active players earn $10+/day. Philippines min wage is $8–10. This organic income pull drove Axie to 2.8M DAU.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 4 — COMPETITIVE MATRIX
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="4">
+  <div class="slide-header">
+    <div class="eyebrow">Competitive Analysis</div>
+    <h2>No One Has Built <span>This Combination</span></h2>
+  </div>
+  <div class="slide-body">
+    <div class="card" style="flex:1;overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th style="color:var(--green)">FBMXFARM</th>
+            <th>Farmers World</th>
+            <th>CropBytes</th>
+            <th>Axie Infinity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Chain</td>
+            <td class="green" style="font-weight:700">BSC</td>
+            <td style="color:var(--muted)">WAX</td>
+            <td style="color:var(--muted)">Tron/Multi</td>
+            <td style="color:var(--muted)">Ethereum</td>
+          </tr>
+          <tr>
+            <td>Gas Fee</td>
+            <td class="green" style="font-weight:700">$0.01</td>
+            <td style="color:var(--muted)">$0.10+</td>
+            <td style="color:var(--muted)">$0.05+</td>
+            <td style="color:var(--rose)">$5–50</td>
+          </tr>
+          <tr>
+            <td>Bonding Curve</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+          </tr>
+          <tr>
+            <td>Browser-Based</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span> Mobile only</td>
+            <td><span class="chk">✓</span></td>
+          </tr>
+          <tr>
+            <td>100% On-Chain State</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span> Partial</td>
+            <td><span class="xmark">✗</span> Partial</td>
+            <td><span class="xmark">✗</span> Partial</td>
+          </tr>
+          <tr>
+            <td>VWAP Price Oracle</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+          </tr>
+          <tr>
+            <td>Admin Configurable</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td>Limited</td>
+          </tr>
+          <tr>
+            <td>Open Source</td>
+            <td><span class="chk">✓</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+            <td><span class="xmark">✗</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:14px 20px;flex-shrink:0">
+      <span style="color:var(--green);font-weight:800">First mover: </span>
+      <span style="font-size:13px">FBMXFARM is the only farming P2E game combining BSC low fees + full on-chain state + bonding curve supply constraint + VWAP market transparency. This combination has never shipped.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 15 — REVENUE PROJECTION
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="16">
+  <div>
+    <div class="eyebrow gold">💵 Revenue &amp; Volume Projections</div>
+    <h2 class="slide-title">In-Game Economy — <span class="hl">Marketplace Volume</span></h2>
+    <p class="slide-sub">As players accumulate seeds and list them on the marketplace, secondary market volume grows. This VWAP-tracked market becomes the economic engine of the entire ecosystem.</p>
+  </div>
+  <div class="slide-body">
+    <div style="height:250px;position:relative;flex-shrink:0">
+      <canvas id="revenueChart"></canvas>
+    </div>
+    <div class="grid4" style="flex:unset">
+      <div class="card"><div class="stat-num green" style="font-size:20px">$2K</div><div class="stat-lbl">Est. Monthly Volume · 100 Players</div></div>
+      <div class="card"><div class="stat-num gold" style="font-size:20px">$50K</div><div class="stat-lbl">Est. Monthly Volume · 1,000 Players</div></div>
+      <div class="card"><div class="stat-num" style="color:var(--teal);font-size:20px">$800K</div><div class="stat-lbl">Est. Monthly Volume · 10K Players</div></div>
+      <div class="card"><div class="stat-num purple" style="font-size:20px">$12M+</div><div class="stat-lbl">Est. Monthly Volume · 100K Players</div></div>
+    </div>
+    <div class="card glow-green" style="flex-shrink:0;padding:14px 20px">
+      <div style="font-size:12px;color:var(--muted);line-height:1.65">Volume assumptions: avg 5 marketplace transactions/player/week at avg 200 seeds per trade at mid-range bonding curve price (~0.15 FBMX/seed). GameFi comparable: Axie Infinity peak at $4B monthly marketplace volume with 2.7M daily active players.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 11 — TOKEN VALUE DRIVERS
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="18">
+  <div>
+    <div class="eyebrow gold">🚀 FBMX Token Economics</div>
+    <h2 class="slide-title">Why the <span class="hl">Token Price Will Rise</span></h2>
+    <p class="slide-sub">FBMX isn't just a game currency. It is the fuel for an economy that creates structural buying pressure on every single transaction.</p>
+  </div>
+  <div class="slide-body">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="driver-card">
+        <div class="driver-icon">🔒</div>
+        <div>
+          <div class="driver-title">Deposit-Only Entry — Every Player Buys FBMX First</div>
+          <div class="driver-body">To play, you must deposit FBMX. There is no free-to-play bypass. Every new player is a FBMX buyer. 1,000 players each depositing $50 = $50,000 in direct FBMX demand. At 10,000 players: $500,000 in locked FBMX inside the contract.</div>
+        </div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-icon">📉</div>
+        <div>
+          <div class="driver-title">Seeds Are Burned on Late Harvests — Deflationary Mechanic</div>
+          <div class="driver-body">Every late harvest burns seeds from the supply. Fewer seeds = higher bonding curve price per seed = more FBMX needed to buy the same number of seeds. Burn events are permanently visible on-chain, creating a scarcity narrative the market can observe and price in.</div>
+        </div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-icon">🏪</div>
+        <div>
+          <div class="driver-title">Marketplace Creates Real FBMX Velocity</div>
+          <div class="driver-body">Every marketplace purchase transfers coins (FBMX) from buyer to seller. Sellers withdraw to their wallet as FBMX. This creates a circular economy where active players continuously recirculate FBMX through the contract, maintaining constant on-chain transaction volume that signals ecosystem health to external investors.</div>
+        </div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-icon">🏆</div>
+        <div>
+          <div class="driver-title">Leaderboard Competition Locks Capital</div>
+          <div class="driver-body">Players competing for Top 50 seed and coin positions will NOT sell or withdraw — they'll buy more FBMX to plant more plots and accumulate more seeds. Competitive vanity metrics are one of the most powerful capital retention tools in gaming. Leaderboard players become long-term FBMX HODLers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 12 — TOKEN PRICE PROJECTION
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="19">
+  <div>
+    <div class="eyebrow gold">📈 FBMX Price Projection</div>
+    <h2 class="slide-title">Token Value as <span class="hl">Player Base Grows</span></h2>
+    <p class="slide-sub">A simple supply/demand model: as more FBMX gets locked in the contract (deposits) with flat or decreasing market supply, price appreciates. This is the thesis.</p>
+  </div>
+  <div class="slide-body">
+    <div style="height:270px;position:relative;flex-shrink:0">
+      <canvas id="tokenChart"></canvas>
+    </div>
+    <div class="grid3" style="flex:unset">
+      <div class="card" style="border-color:rgba(34,197,94,.2)">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Bull Scenario</div>
+        <div class="stat-num green" style="font-size:22px">50K+ Players</div>
+        <div class="stat-lbl">$500K+ in contract liquidity<br>VWAP steadily rising<br>BSC DeFi listing visibility</div>
+      </div>
+      <div class="card glow-gold">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Base Scenario</div>
+        <div class="stat-num gold" style="font-size:22px">10K Players</div>
+        <div class="stat-lbl">$100K+ in contract liquidity<br>Marketplace volume growing<br>Organic community building</div>
+      </div>
+      <div class="card" style="border-color:rgba(244,63,94,.15)">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Bear Scenario</div>
+        <div class="stat-num rose" style="font-size:22px">500 Players</div>
+        <div class="stat-lbl">Contract still running<br>Core community intact<br>Lower but positive VWAP</div>
+      </div>
+    </div>
+    <div class="card" style="flex-shrink:0;border-color:rgba(245,158,11,.15);padding:12px 18px">
+      <div style="font-size:11px;color:rgba(156,163,175,.6);line-height:1.6">⚠️ Price projections are speculative and illustrative only. Token price is determined by open market forces outside the game contract. Past performance of comparable GameFi tokens does not guarantee future results. This is not financial advice.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 13 — TOKEN HOLDERS BENEFIT MORE
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="20">
+  <div>
+    <div class="eyebrow purple">💎 FBMX Holder Advantage</div>
+    <h2 class="slide-title">Holders <span class="hl">Benefit More</span> as the Game Grows</h2>
+    <p class="slide-sub">FBMX Farm creates a unique dual-layer reward: you earn from farming, AND your token holdings appreciate as the ecosystem expands.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid2" style="flex:unset">
+      <div class="card glow-purple">
+        <div style="font-size:13px;font-weight:800;color:var(--purple);margin-bottom:12px">💎 What FBMX Holders Get</div>
+        <div class="benefit-row">
+          <div class="benefit-check">✅</div>
+          <div><div class="benefit-title">Direct Farming Yield</div><div class="benefit-body">Deposit FBMX → farm → harvest more seeds → sell seeds → withdraw more FBMX than you deposited. The game itself is a yield instrument.</div></div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-check">✅</div>
+          <div><div class="benefit-title">Bonding Curve Appreciation</div><div class="benefit-body">Seeds you earned when few players existed are now worth 2× more FBMX per seed due to rising demand. Early depositors receive the greatest amplification.</div></div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-check">✅</div>
+          <div><div class="benefit-title">Marketplace Revenue</div><div class="benefit-body">List seeds above bonding curve price on the marketplace. Other players pay your asking price. You extract FBMX profit beyond the standard harvest yield.</div></div>
+        </div>
+        <div class="benefit-row" style="border-bottom:none">
+          <div class="benefit-check">✅</div>
+          <div><div class="benefit-title">Leaderboard Status</div><div class="benefit-body">Top-50 seed and coin holders gain visible on-chain prestige. Competitive ranking drives continuous re-investment and community engagement — keeping you in the game and growing.</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="hook-card">
+          <div class="hook-num">3×</div>
+          <div class="hook-title">Layers of Profit</div>
+          <div class="hook-body">Harvest yield + seed price appreciation + marketplace spread. No other BSC game offers all three simultaneously from a single 1:1 FBMX-backed asset.</div>
+        </div>
+        <div class="hook-card" style="border-color:rgba(34,197,94,.25)">
+          <div class="hook-num" style="color:var(--green)">9</div>
+          <div class="hook-title">Active Plots at Once</div>
+          <div class="hook-body">Every additional plot you unlock and plant is a separate, parallel yield stream. 9 simultaneous streams compound faster than any single-plot game model.</div>
+        </div>
+        <div class="hook-card" style="border-color:rgba(45,212,191,.25)">
+          <div class="hook-num" style="color:var(--teal)">∞</div>
+          <div class="hook-title">No Expiry, No Season End</div>
+          <div class="hook-body">The smart contract runs forever on BSC. No season reset. No wipe. Your seeds, your rank, your earnings — permanent on-chain. Unlike centralized games, nobody can take it away.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card glow-gold" style="flex-shrink:0;padding:14px 20px">
+      <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px">The Compounding Multiplier — Hold + Farm + Compound</div>
+      <div style="display:flex;gap:32px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--muted)">Player who farms and compounds 90 days:</div>
+        <div><span class="gold" style="font-size:14px;font-weight:900">~36× seed stack growth in 90 days</span> <span style="font-size:11px;color:var(--muted)">(Millet base 1%, full reinvest) — up to 1,000×+ during seasonal 3% events</span></div>
+        <div><span class="green" style="font-size:14px;font-weight:900">+Token price appreciation</span> <span style="font-size:11px;color:var(--muted)">(ecosystem growth)</span></div>
+        <div><span class="teal" style="font-size:14px;font-weight:900">+Marketplace premium</span> <span style="font-size:11px;color:var(--muted)">(sell above bonding curve)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 14 — WHY PLAYERS GET ADDICTED
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="11">
+  <div>
+    <div class="eyebrow purple">🧠 Psychology of Play</div>
+    <h2 class="slide-title">Why Players <span class="hl">Can't Stop Farming</span></h2>
+    <p class="slide-sub">FBMX Farm is engineered with the same psychological reward loops that power the world's most successful games — but with real on-chain economics layered on top.</p>
+  </div>
+  <div class="slide-body">
+    <div class="grid2" style="flex:unset">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="hook-card">
+          <div class="hook-num">⏱️</div>
+          <div class="hook-title">The Harvest Anxiety Loop</div>
+          <div class="hook-body">You planted. The clock is ticking. Miss Stage 4 = lose seeds. You WILL check the app. Every 6 hours for Millet. Every session is time-critical. This is designed compulsion — stakes are real because losses are real.</div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-num">📈</div>
+          <div class="hook-title">Visible Progress on Every Transaction</div>
+          <div class="hook-body">Every harvest updates your seed count. Every purchase moves your leaderboard rank. Every plant adds to your locked supply. Progress is constant, visible, and addictive — you're always getting better.</div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-num">🏆</div>
+          <div class="hook-title">Social Competition via Leaderboard</div>
+          <div class="hook-body">Top 50 Seeds and Top 50 Coins — updated live after every single transaction by anyone. Seeing your rank slip one position is enough to trigger an immediate replant. Social comparison is the strongest known motivator for sustained engagement.</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="hook-card">
+          <div class="hook-num">💰</div>
+          <div class="hook-title">Real Financial Stakes</div>
+          <div class="hook-body">This isn't points or XP. It's FBMX. A real BEP-20 token with real market value. The psychological weight of real money — the fear of loss and joy of gain — is 10× more powerful than in-game fiat. Every harvest is a real financial event.</div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-num">🔄</div>
+          <div class="hook-title">The Compound Obsession</div>
+          <div class="hook-body">Once players understand exponential growth, they can't stop calculating. "If I reinvest for 3 more months before selling..." The mathematical journey — watching your 900-seed stack grow to 3,000 then 10,000 then 32,000 — creates a visceral, numbers-driven addiction unique to DeFi gaming. And when seasonal 2–3% events drop, the acceleration is electrifying.</div></div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-num">🌐</div>
+          <div class="hook-title">Permanent On-Chain Legacy</div>
+          <div class="hook-body">Your wallet address, your seed count, your leaderboard rank — forever recorded on BSC. Players who reach Top 10 have on-chain proof of their achievement that can never be erased. Blockchain permanence creates a unique status layer no traditional game can match.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 15 — THE BIG PICTURE CHART
+══════════════════════════════════════════════════════════ -->
+<div class="slide" data-index="17">
+  <div>
+    <div class="eyebrow teal">🌍 Ecosystem Overview</div>
+    <h2 class="slide-title">The Full Picture — <span class="hl">Every Number Connected</span></h2>
+    <p class="slide-sub">Seeds, coins, FBMX, players, marketplace volume — every metric feeds every other. This is what a self-sustaining on-chain economy looks like.</p>
+  </div>
+  <div class="slide-body">
+    <div style="height:260px;position:relative;flex-shrink:0">
+      <canvas id="ecosystemChart"></canvas>
+    </div>
+    <div class="grid4" style="flex:unset">
+      <div class="card glow-green">
+        <div class="stat-num green" style="font-size:18px">$0.005</div>
+        <div class="stat-lbl">Cost Per Full Cycle<br>(plant + harvest, BSC gas)</div>
+      </div>
+      <div class="card glow-gold">
+        <div class="stat-num gold" style="font-size:18px">50</div>
+        <div class="stat-lbl">Leaderboard Slots<br>(Seeds + Coins)</div>
+      </div>
+      <div class="card" style="border-color:rgba(45,212,191,.25)">
+        <div class="stat-num teal" style="font-size:18px">∞</div>
+        <div class="stat-lbl">Game Duration<br>(Smart contract, no expiry)</div>
+      </div>
+      <div class="card" style="border-color:rgba(168,85,247,.25)">
+        <div class="stat-num purple" style="font-size:18px">1:1</div>
+        <div class="stat-lbl">FBMX ↔ Coins<br>(Always redeemable)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+  SLIDE 16 — DISCLAIMER
+══════════════════════════════════════════════════════════ -->
+<div class="slide slide-disclaimer" data-index="21">
+  <div class="disclaimer-box">
+    <div class="disc-icon">⚖️</div>
+    <div class="disc-title">Important Notice — Please Read</div>
+    <div class="disc-body">
+      FBMX Farm is a <strong style="color:var(--text)">blockchain-based entertainment game</strong> built for the enjoyment of farming simulation and DeFi mechanics. All game mechanics are open-source, verifiable smart contracts on BSC.
+      <br><br>
+      While the game's mechanics allow players to earn FBMX tokens through skilled and timely farming, <strong style="color:var(--gold)">this is NOT financial advice, investment advice, or a guarantee of profit</strong>. Token values fluctuate based on open market forces entirely outside the game contract. On-chain earnings depend on harvest timing, seed prices, and market conditions — all of which can change.
+      <br><br>
+      Projections shown in this presentation are <strong style="color:var(--text)">illustrative models</strong> based on idealized assumptions. They do not represent promised returns. Past performance of comparable GameFi projects does not guarantee future results. Only participate with funds you can afford to lose.
+      <br><br>
+      The game is designed for <strong style="color:var(--green)">entertainment and community</strong> — and it happens to be financially rewarding when played skillfully. That combination is what makes it extraordinary.
+    </div>
+    <div class="disc-pills">
+      <span class="disc-pill" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green)">🎮 Entertainment First</span>
+      <span class="disc-pill" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--gold)">⛓️ 100% On-Chain Transparent</span>
+      <span class="disc-pill" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--blue)">🔍 Verify All Logic On BSCScan</span>
+      <span class="disc-pill" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);color:var(--purple)">📜 Not Financial Advice</span>
+    </div>
+  </div>
+</div>
+
+<!-- CLOSING placeholder (reachable after disclaimer) -->
+<div class="slide slide-close" data-index="22" style="display:none"></div>
+
+</div><!-- end .deck -->
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+  <button id="btnPrev" onclick="go(-1)" disabled>←</button>
+  <div class="dot-row" id="dotRow"></div>
+  <span class="slide-counter" id="counter">1 / 16</span>
+  <button id="btnNext" onclick="go(1)">→</button>
+</nav>
+
+<script>
+// ─── Slide deck ─────────────────────────────────────────
+const slides = Array.from(document.querySelectorAll('.slide[data-index]'))
+  .filter(s => s.style.display !== 'none')
+  .sort((a,b) => parseInt(a.dataset.index) - parseInt(b.dataset.index))
+const N      = slides.length
+let current  = 0
+let chartsInit = {}
+
+const progress = document.getElementById('progress')
+const badge    = document.getElementById('slideBadge')
+const counter  = document.getElementById('counter')
+const dotRow   = document.getElementById('dotRow')
+const btnPrev  = document.getElementById('btnPrev')
+const btnNext  = document.getElementById('btnNext')
+
+// Build dots
+slides.forEach((_,i)=>{
+  const d=document.createElement('div')
+  d.className='dot'+(i===0?' active':'')
+  d.onclick=()=>goTo(i)
+  dotRow.appendChild(d)
+})
+
+function updateUI(){
+  const pct = ((current+1)/N*100).toFixed(1)
+  progress.style.width = pct+'%'
+  badge.textContent    = `${current+1} / ${N}`
+  counter.textContent  = `${current+1} / ${N}`
+  btnPrev.disabled     = current===0
+  btnNext.disabled     = current===N-1
+  dotRow.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===current))
+  if(!chartsInit[current]) { initChart(current); chartsInit[current]=true }
+}
+
+function goTo(idx){
+  if(idx<0||idx>=N) return
+  slides[current].classList.remove('active')
+  slides[current].classList.add('exit')
+  setTimeout(()=>slides[current].classList.remove('exit'),500)
+  current=idx
+  slides[current].classList.add('active')
+  updateUI()
+}
+
+function go(d){ goTo(current+d) }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') go(1)
+  if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   go(-1)
+})
+
+// ─── Particles ──────────────────────────────────────────
+const cvs = document.getElementById('particles')
+const ctx2 = cvs.getContext('2d')
+cvs.width  = window.innerWidth
+cvs.height = window.innerHeight
+const EMOJIS = ['🌱','🌾','🫘','💰','✨']
+const parts = Array.from({length:28},()=>({
+  x: Math.random()*cvs.width,
+  y: Math.random()*cvs.height,
+  e: EMOJIS[Math.floor(Math.random()*EMOJIS.length)],
+  s: 10+Math.random()*14,
+  vy: .15+Math.random()*.3,
+  vx: (Math.random()-.5)*.15,
+  o: .04+Math.random()*.08,
+}))
+function drawParticles(){
+  ctx2.clearRect(0,0,cvs.width,cvs.height)
+  parts.forEach(p=>{
+    ctx2.globalAlpha=p.o
+    ctx2.font=p.s+'px serif'
+    ctx2.fillText(p.e,p.x,p.y)
+    p.y-=p.vy; p.x+=p.vx
+    if(p.y<-20){p.y=cvs.height+20;p.x=Math.random()*cvs.width}
+  })
+  ctx2.globalAlpha=1
+  requestAnimationFrame(drawParticles)
+}
+drawParticles()
+window.addEventListener('resize',()=>{cvs.width=innerWidth;cvs.height=innerHeight})
+
+// ─── Chart helpers ───────────────────────────────────────
+const CHART_DEFAULTS = {
+  color:'rgba(240,250,240,.7)',
+  responsive:true, maintainAspectRatio:false,
+}
+Chart.defaults.color = 'rgba(107,143,107,.8)'
+Chart.defaults.font  = {family:'Segoe UI, system-ui, sans-serif', size:11}
+
+function gridColor(){ return 'rgba(30,58,30,.5)' }
+
+function initChart(idx){
+  if(idx===2)  initMarketChart()
+  if(idx===9)  initBondingChart()
+  if(idx===12) initCompoundChart()
+  if(idx===15) initPlayerChart()
+  if(idx===16) initRevenueChart()
+  if(idx===17) initEcosystemChart()
+  if(idx===19) initTokenChart()
+}
+
+// ─── Market size bar chart ────────────────────────────────
+function initMarketChart(){
+  const el=document.getElementById('marketChart')
+  if(!el) return
+  const labels=['2024','2025','2026','2027','2028','2029','2030E']
+  const data=[13.97,21.59,35,55,90,170,301]
+  new Chart(el,{
+    type:'bar',
+    data:{labels,datasets:[{
+      label:'Blockchain Gaming Market ($B)',
+      data,
+      backgroundColor:labels.map((_,i)=>`rgba(34,197,94,${0.3+i*0.1})`),
+      borderColor:'rgba(34,197,94,.6)',borderWidth:1,borderRadius:8,
+    }]},
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`$${c.parsed.y}B`}}},
+      scales:{x:{grid:{color:gridColor()}},y:{grid:{color:gridColor()},ticks:{callback:v=>`$${v}B`}}}}
+  })
+}
+
+// ─── Bonding curve chart ─────────────────────────────────
+function initBondingChart(){
+  const el=document.getElementById('bondingChart')
+  if(!el) return
+  const labels=['0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%']
+  const price = labels.map(l=>{
+    const pct=parseInt(l)/100
+    return parseFloat((10/(1+pct)).toFixed(2))
+  })
+  new Chart(el,{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Seeds per Coin',data:price,
+      borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',
+      tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#f59e0b',
+    }]},
+    options:{...CHART_DEFAULTS,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y} seeds/coin`}}},
+      scales:{x:{title:{display:true,text:'% Seeds Planted'},grid:{color:gridColor()}},
+              y:{title:{display:true,text:'Seeds per Coin'},grid:{color:gridColor()},min:4}}}
+  })
+}
+
+// ─── Compound growth chart ───────────────────────────────
+function initCompoundChart(){
+  const el=document.getElementById('compoundChart')
+  if(!el) return
+  const days=Array.from({length:91},(_,i)=>i)
+  // 1% profit per cycle. Compound: seeds × (1.01)^(cycles_per_day × day)
+  // Millet: 100 seeds/plot × 9 = 900,  4 cycles/day → +4.06%/day
+  // Wheat:  200 seeds/plot × 9 = 1800, 3 cycles/day → +3.03%/day
+  // Corn:   350 seeds/plot × 9 = 3150, 2 cycles/day → +2.01%/day
+  // Rice:   800 seeds/plot × 9 = 7200, 1 cycle/day  → +1.00%/day
+  const millet = days.map(d=>Math.round(900  * Math.pow(1.01, 1*d)))
+  const wheat  = days.map(d=>Math.round(1800 * Math.pow(1.01, 1*d)))
+  const corn   = days.map(d=>Math.round(3150 * Math.pow(1.01, 1*d)))
+  const rice   = days.map(d=>Math.round(7200 * Math.pow(1.01, 1*d)))
+  new Chart(el,{
+    type:'line',
+    data:{
+      labels: days.filter(d=>d%5===0).map(d=>`Day ${d}`),
+      datasets:[
+        {label:'Millet — 900 seeds · 4×/day → +1.00%/day',  data:millet.filter((_,i)=>i%5===0),borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',tension:.4,fill:false,pointRadius:2},
+        {label:'Wheat  — 1,800 seeds · 3×/day → +1.00%/day', data:wheat.filter((_,i)=>i%5===0), borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',tension:.4,fill:false,pointRadius:2},
+        {label:'Corn   — 3,150 seeds · 2×/day → +1.00%/day', data:corn.filter((_,i)=>i%5===0),  borderColor:'#a855f7',backgroundColor:'rgba(168,85,247,.05)',tension:.4,fill:false,pointRadius:2},
+        {label:'Rice   — 7,200 seeds · 1×/day → +1.00%/day', data:rice.filter((_,i)=>i%5===0),  borderColor:'#2dd4bf',backgroundColor:'rgba(45,212,191,.04)',tension:.4,fill:false,pointRadius:2},
+      ]
+    },
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14}}},
+      scales:{x:{grid:{color:gridColor()}},y:{grid:{color:gridColor()},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v}}}}
+  })
+}
+
+// ─── Player growth chart ─────────────────────────────────
+function initPlayerChart(){
+  const el=document.getElementById('playerChart')
+  if(!el) return
+  const months=['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','Y2','Y3']
+  const bear=[50,80,120,160,200,250,300,350,400,450,500,550,700,900]
+  const base=[100,250,500,900,1500,2500,4000,6000,8000,9500,11000,13000,25000,50000]
+  const bull=[200,600,1500,3500,7000,12000,18000,25000,35000,45000,60000,80000,200000,500000]
+  new Chart(el,{
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'Bull',data:bull,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',tension:.4,fill:true,pointRadius:2,borderDash:[0]},
+      {label:'Base',data:base,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',tension:.4,fill:true,pointRadius:2},
+      {label:'Bear',data:bear,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.04)',tension:.4,fill:false,pointRadius:2,borderDash:[4,3]},
+    ]},
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{position:'top',labels:{boxWidth:10}}},
+      scales:{x:{grid:{color:gridColor()}},y:{grid:{color:gridColor()},type:'logarithmic',
+        ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(0)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v}}}}
+  })
+}
+
+// ─── Revenue chart ───────────────────────────────────────
+function initRevenueChart(){
+  const el=document.getElementById('revenueChart')
+  if(!el) return
+  const months=['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12']
+  const vol=[2,5,12,30,60,120,200,350,550,800,1200,2000]
+  new Chart(el,{
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'Est. Monthly Marketplace Volume ($K)',data:vol,
+       backgroundColor:months.map((_,i)=>`rgba(34,197,94,${0.3+i*0.055})`),
+       borderColor:'rgba(34,197,94,.6)',borderWidth:1,borderRadius:6},
+    ]},
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`$${c.parsed.y}K`}}},
+      scales:{x:{grid:{color:gridColor()}},y:{grid:{color:gridColor()},ticks:{callback:v=>v+'K'}}}}
+  })
+}
+
+// ─── Token price chart ───────────────────────────────────
+function initTokenChart(){
+  const el=document.getElementById('tokenChart')
+  if(!el) return
+  const months=['Launch','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','Y2']
+  const bear=[1,0.9,0.8,0.85,0.9,0.95,1.0,1.1,1.05,1.0,1.1,1.2,1.5]
+  const base=[1,1.1,1.3,1.6,2.0,2.5,3.0,3.5,4.2,5.0,6.0,7.5,15]
+  const bull=[1,1.3,2,3.5,6,10,16,24,35,50,70,100,400]
+  new Chart(el,{
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'Bull (50K+ players)',data:bull,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',tension:.4,fill:true,pointRadius:3},
+      {label:'Base (10K players)', data:base,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',tension:.4,fill:true,pointRadius:3},
+      {label:'Bear (500 players)', data:bear,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.03)',tension:.4,fill:false,pointRadius:2,borderDash:[5,3]},
+    ]},
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{position:'top',labels:{boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.parsed.y}× initial`}}},
+      scales:{x:{grid:{color:gridColor()}},y:{grid:{color:gridColor()},ticks:{callback:v=>v+'×'}}}}
+  })
+}
+
+// ─── Ecosystem donut chart ────────────────────────────────
+function initEcosystemChart(){
+  const el=document.getElementById('ecosystemChart')
+  if(!el) return
+  const months=['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12']
+  const deposits=[10,28,65,130,240,400,620,900,1200,1600,2100,2800]
+  const marketplace=[2,6,18,42,90,160,280,420,600,800,1100,1600]
+  const seeds=[5,14,32,65,120,200,310,450,600,800,1050,1400]
+  new Chart(el,{
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'FBMX Deposited ($K)',data:deposits,backgroundColor:'rgba(34,197,94,.6)',borderRadius:4,stack:'a'},
+      {label:'Marketplace Vol ($K)',data:marketplace,backgroundColor:'rgba(245,158,11,.6)',borderRadius:4,stack:'a'},
+      {label:'Seeds Minted Value ($K)',data:seeds,backgroundColor:'rgba(168,85,247,.5)',borderRadius:4,stack:'a'},
+    ]},
+    options:{...CHART_DEFAULTS,
+      plugins:{legend:{position:'top',labels:{boxWidth:10}}},
+      scales:{x:{grid:{color:gridColor()},stacked:true},y:{grid:{color:gridColor()},stacked:true,ticks:{callback:v=>v+'K'}}}}
+  })
+}
+
+// Initialise first slide's chart
+updateUI()
+</script>
+</body>
+</html>
