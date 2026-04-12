@@ -103,8 +103,12 @@ export function LandingPage({ onPlay, onAbout }) {
           ))}
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="float-anim text-7xl sm:text-8xl mb-6 inline-block">🌾</div>
+        <div className="relative z-5 max-w-4xl mx-auto">
+          <img
+            src="/logo.png"
+            alt="FBMX Farm"
+            className="mx-auto mb-1 w-100 h-100 sm:w-150 sm:h-150 lg:w-200 lg:h-200 object-contain float-anim"
+          />
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-4 leading-tight tracking-tight gold-shimmer">
             Farming Evolution

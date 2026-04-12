@@ -108,6 +108,20 @@ export function useOnChainGame(address) {
     query:        { enabled: !!gameAddr, staleTime: 0, refetchInterval: 30_000, refetchOnMount: true },
   })
 
+  const { data: rawLeaderboardSeeds } = useReadContract({
+    address:      gameAddr,
+    abi:          FARMING_GAME_ABI,
+    functionName: 'getLeaderboardSeeds',
+    query:        { enabled: !!gameAddr, staleTime: 0, refetchInterval: 15_000, refetchOnMount: true },
+  })
+
+  const { data: rawLeaderboardCoins } = useReadContract({
+    address:      gameAddr,
+    abi:          FARMING_GAME_ABI,
+    functionName: 'getLeaderboardCoins',
+    query:        { enabled: !!gameAddr, staleTime: 0, refetchInterval: 15_000, refetchOnMount: true },
+  })
+
   // ── Per-plot on-chain harvest status (ground truth, avoids Date.now() drift) ──
   // Query isHarvestReady and isHarvestLate for all 9 plot slots.
   const PLOT_INDICES = [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -372,5 +386,13 @@ export function useOnChainGame(address) {
 
   const totalPlayers = rawTotalPlayers != null ? Number(rawTotalPlayers) : null
 
-  return { state, market, marketStats, crops, totalPlayers, log, actions, pendingAction, supported }
+  const leaderboardSeeds = rawLeaderboardSeeds
+    ? rawLeaderboardSeeds.map((e, i) => ({ rank: i + 1, player: e.player, seeds: Number(e.seeds) }))
+    : []
+
+  const leaderboardCoins = rawLeaderboardCoins
+    ? rawLeaderboardCoins.map((e, i) => ({ rank: i + 1, player: e.player, coins: fromWei(e.coins) }))
+    : []
+
+  return { state, market, marketStats, crops, totalPlayers, leaderboardSeeds, leaderboardCoins, log, actions, pendingAction, supported }
 }

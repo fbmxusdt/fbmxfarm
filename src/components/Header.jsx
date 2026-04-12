@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useConnection, useConnect, useConnectors, useDisconnect } from 'wagmi'
-import { Home, Leaf, TrendingUp, Gamepad2, ShieldCheck, LogIn, LogOut } from 'lucide-react'
+import { Home, Leaf, TrendingUp, Gamepad2, ShieldCheck, Trophy, LogIn, LogOut } from 'lucide-react'
 import { InvestorModal } from './InvestorModal.jsx'
 import { MenuBar }       from '@/components/ui/glow-menu'
 import { useIsOwner }    from '../hooks/useIsOwner.js'
@@ -34,6 +34,12 @@ const MENU_ITEMS = [
     href: '#',
     gradient: 'radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(139,92,246,0.08) 50%, rgba(109,40,217,0) 100%)',
     iconColor: 'text-purple-400',
+  },
+  {
+    id: 'leaderboard', icon: Trophy, label: 'Leaderboard', mobileLabel: 'Leaderboard',
+    href: '#',
+    gradient: 'radial-gradient(circle, rgba(212,160,23,0.22) 0%, rgba(180,130,10,0.08) 50%, rgba(120,90,0,0) 100%)',
+    iconColor: 'text-yellow-400',
   },
   {
     id: 'admin', ownerOnly: true, icon: ShieldCheck, label: 'Admin', mobileLabel: 'Admin Panel',
@@ -197,10 +203,16 @@ export function Header({ currentView, onNavigate }) {
           WebkitBackdropFilter: 'blur(12px)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-3">
 
+          {/* ── Logo — mobile only ── */}
+          <img
+            src="/logo.png"
+            alt="FBMX Farm"
+            className="md:hidden h-8 w-auto shrink-0 object-contain"
+          />
 
-          {/* ── Center nav ── */}
+          {/* ── Center nav — desktop only ── */}
           <nav className="hidden md:flex flex-1 justify-center">
             <MenuBar
               items={navItems}
@@ -209,25 +221,24 @@ export function Header({ currentView, onNavigate }) {
             />
           </nav>
 
-          {/* ── Right side ── */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Hamburger — mobile only */}
-            <button
-              className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg"
-              style={{
-                background: menuOpen ? 'var(--forest-light)' : 'transparent',
-                color: 'var(--parchment)',
-              }}
-              onClick={() => setMenuOpen(v => !v)}
-              aria-label="Menu"
-            >
-              {menuOpen ? '✕' : '☰'}
-            </button>
-            {/* ── Logo ── */}
-            <div className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg">Logo</div>
-          </div>
+          {/* ── Mobile: spacer pushes hamburger to right ── */}
+          <div className="flex-1 md:hidden" />
 
-          
+
+          {/* ── Hamburger — mobile only ── */}
+          <button
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+            style={{
+              background: menuOpen ? 'var(--forest-light)' : 'transparent',
+              color: 'var(--parchment)',
+            }}
+            onClick={() => setMenuOpen(v => !v)}
+            aria-label="Menu"
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
+
+
 
         </div>
 

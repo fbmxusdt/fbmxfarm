@@ -57,7 +57,7 @@ export function InvestorModal({ onClose }) {
 
         {/* Investor deck iframe */}
         <iframe
-          src="/LEARN.html"
+          src="/LEARNV2.html"
           title="FBMX Farming — Game Introduction"
           className="w-full flex-1 border-0"
           style={{ minHeight: 0 }}

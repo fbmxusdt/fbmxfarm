@@ -81,14 +81,14 @@ function ListingCard({ listing, isOwn, myCoins, onBuy }) {
             min={1}
             max={listing.remaining}
             value={amount}
-            onChange={e => setAmount(Math.max(1, Math.min(listing.remaining, parseInt(e.target.value) || 1)))}
+            onChange={e => setAmount(Math.max(1, Math.min(listing.remaining, parseInt(e.target.value) || '')))}
             className="w-16 bg-gray-600 border border-gray-500 rounded-lg px-2 py-1 text-xs text-center text-white focus:outline-none focus:border-green-500"
           />
           <div className="flex-1 text-xs text-gray-400">
             = <span className={canAfford ? 'text-amber-400 font-bold' : 'text-red-400 font-bold'}>{cost} 💰</span>
           </div>
           <button
-            disabled={!canAfford || listing.remaining < 1}
+            disabled={!canAfford || listing.remaining < 1 || amount<1}
             onClick={() => onBuy(listing, amount)}
             className="bg-green-700 hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
           >

@@ -13,6 +13,7 @@ import { PlantModal }            from './components/PlantModal.jsx'
 import { SwapModal }             from './components/SwapModal.jsx'
 import { WalletButton }          from './components/WalletButton.jsx'
 import { AdminPage }             from './components/AdminPage.jsx'
+import { LeaderboardPage }       from './components/LeaderboardPage.jsx'
 import { ProfitabilityWidget }   from './components/ProfitabilityWidget.jsx'
 import { LandingPage }           from './components/LandingPage.jsx'
 import { AboutGame }             from './components/AboutGame.jsx'
@@ -53,6 +54,10 @@ export default function App() {
 
       {view === 'admin' && (
         <AdminPage onBack={() => setView('game')} />
+      )}
+
+      {view === 'leaderboard' && (
+        <LeaderboardPage onBack={() => setView(address ? 'game' : 'landing')} />
       )}
 
       {view === 'game' && (

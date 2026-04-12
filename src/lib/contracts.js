@@ -29,9 +29,9 @@ export const ERC20_ABI = [
 ]
 
 export const FARMING_GAME_ADDRESS = {
-  31337: import.meta.env.VITE_FARMING_GAME_ADDRESS_HARDHAT || '0x0165878A594ca255338adfa4d48449f69242Eb8F',
-  97:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC_TEST || '',
-  56:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC     || '0x9A9d51edb12aA03abDD1ead955F01eE489617b83',
+  31337: import.meta.env.VITE_FARMING_GAME_ADDRESS_HARDHAT || '0x70e0bA845a1A0F2DA3359C97E0285013525FFC49',
+  97:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC_TEST || '0x9A9d51edb12aA03abDD1ead955F01eE489617b83',
+  56:    import.meta.env.VITE_FARMING_GAME_ADDRESS_BSC     || '0x20671793395585038aab832BC85Bb0c82393a85e',
 }
 
 export const FARMING_GAME_ABI = [
@@ -131,6 +131,16 @@ export const FARMING_GAME_ABI = [
     ]}]},
   { name: 'owner', type: 'function', stateMutability: 'view',
     inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { name: 'getLeaderboardSeeds', type: 'function', stateMutability: 'view',
+    inputs: [], outputs: [{ name: '', type: 'tuple[]', components: [
+      { name: 'player', type: 'address' },
+      { name: 'seeds',  type: 'uint256' },
+    ]}]},
+  { name: 'getLeaderboardCoins', type: 'function', stateMutability: 'view',
+    inputs: [], outputs: [{ name: '', type: 'tuple[]', components: [
+      { name: 'player', type: 'address' },
+      { name: 'coins',  type: 'uint256' },
+    ]}]},
   { name: 'contractFBMXBalance', type: 'function', stateMutability: 'view',
     inputs: [], outputs: [{ name: '', type: 'uint256' }] },
 
